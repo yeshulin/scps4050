@@ -79,10 +79,6 @@
                   ],  //取消默认排序查询,否则复选框一列会出现小箭头
                   renderer: "bootstrap",  //渲染样式：Bootstrap和jquery-ui
                   pagingType: "full_numbers",  //分页样式：simple,simple_numbers,full,full_numbers
-                  "columnDefs": [ {
-                      "targets": 7,
-                      "defaultContent": ' <button class="layui-btn layui-btn-small view">查看</button><button class="layui-btn layui-btn-small layui-btn-normal pass">通过</button><button class="layui-btn layui-btn-small layui-btn-warm reject">驳回</button>'
-                  } ],
                   ajax: function (data, callback, settings) {
 				
                       //封装请求参数
@@ -130,8 +126,32 @@
 					{ data: 'Months' },
 					{ data: 'Realname' },
 			        { data: 'Postion' },
-			        { data: 'Isverify' },
-			        { data: 'Addtime' }
+			        { 
+						data: 'Isverify',
+						render:function(data, type, row, meta){
+							if(data==1){
+								return '通过';
+							}else if(data ==-1){
+								return '驳回';
+							}else{
+								return '待审';
+							}
+						}
+					},	
+			        { data: 'Addtime' },
+					{
+				       "data": "isverify",
+				       "orderable": false, // 禁用排序
+				       "defaultContent": "",
+				       "render": function (data, type, row, meta) {
+						   if(data==0){
+								return data = '<button class="layui-btn layui-btn-small view">查看</button><button class="layui-btn layui-btn-small layui-btn-normal pass">通过</button><button class="layui-btn layui-btn-small layui-btn-warm reject">驳回</button>';
+							}else{
+								return data = '<button class="layui-btn layui-btn-small view">查看</button>';
+							}
+				           
+				        }
+					},	
                   ],
                   "language": {
                       "processing": "加载中...",
@@ -206,6 +226,10 @@
                 }
             });
         } );
+		$('#dateTable tbody').on( 'click','.view',function () {
+            var data = dataTable.row( $(this).parents('tr') ).data();
+			window.location="/admin/signs/view?id="+data.Id;
+		});	
 		$('#dateTable tbody').on( 'click','.pass',function () {
 
             var data = dataTable.row( $(this).parents('tr') ).data();

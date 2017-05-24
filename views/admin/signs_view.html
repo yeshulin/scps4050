@@ -31,63 +31,48 @@
     </colgroup>
     <thead>
     <tr>
-        <th>名称</th>
-        <th>{{.news.Title}}</th>
+        <th>年度</th>
+        <th>{{.signs.Years}}</th>
     </tr>
     </thead>
     <tbody>
 	<tr>
-        <td>分类ID</td>
-        <td>{{.news.Catid}}</td>
+        <td>月度</td>
+        <td>{{.signs.Months}}</td>
     </tr>
 	<tr>
-        <td>分类名称</td>
-        <td>{{.newstype.Catname}}</td>
+        <td>姓名</td>
+        <td>{{.signs.Realname}}</td>
     </tr>
 	<tr>
-        <td>缩略图</td>
-        <td><img src="{{.news.Thumb}}" width="200"></td>
+        <td>签到定位</td>
+        <td>{{.signs.Postion}}</td>
     </tr>
 	<tr>
-        <td>关键词</td>
-        <td>{{.news.Keywords}}</td>
+        <td>签到照片</td>
+        <td><img src="{{.signs.Photos}}" width="200"></td>
     </tr>
 	<tr>
-        <td>描述</td>
-        <td>{{.news.Description}}</td>
+        <td>是否审核</td>
+        <td>{{if eq .signs.Isverify 1}}通过{{else if eq .signs.Isverify -1}}驳回{{else}}待审{{end}}</td>
     </tr>
 	<tr>
-        <td>内容</td>
-        <td>{{.news.Content}}</td>
-    </tr>
-	<tr>
-        <td>排序</td>
-        <td>{{.news.Sort}}</td>
-    </tr>
-	<tr>
-        <td>排序</td>
-        <td>{{.news.Sort}}</td>
-    </tr>
-	<tr>
-        <td>状态</td>
-        <td>{{.news.Status}}</td>
-    </tr>
-	<tr>
-        <td>作者</td>
-        <td>{{.news.Username}}</td>
+        <td>反馈内容</td>
+        <td>{{.signs.Remark}}</td>
     </tr>
 	<tr>
         <td>添加时间</td>
-        <td>{{.news.Addtime | ConvertT}}</td>
+        <td>{{.signs.Addtime | ConvertT}}</td>
     </tr>
 	 <tr>
         <td>修改时间</td>
-        <td>{{.news.Updatetime | ConvertT}}</td>
+        <td>{{.signs.Updatetime | ConvertT}}</td>
     </tr>
 
     
     </tbody>
 </table>
+<script src="/static/vipadmin/frame/layui/layui.js" charset="utf-8"></script>
 <script type="text/javascript">
 layui.use(['element','form'], function(){})
 </script>

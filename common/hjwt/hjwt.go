@@ -14,7 +14,7 @@ var (
 )
 
 // 产生json web token
-func GenToken(id int, username string, realname string, email string, phone string) string {
+func GenToken(id int, username string, realname string, email string, phone string, role_id int, rolename string) string {
 	fmt.Println(key)
 	//	claims := &jwt.StandardClaims{
 	//		NotBefore: int64(time.Now().Unix()),
@@ -33,6 +33,8 @@ func GenToken(id int, username string, realname string, email string, phone stri
 		"email":    email,
 		"phone":    phone,
 		"realname": realname,
+		"role_id":  role_id,
+		"rolename": rolename,
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	ss, err := token.SignedString(key)
@@ -45,13 +47,14 @@ func GenToken(id int, username string, realname string, email string, phone stri
 
 // 校验token是否有效
 
-func CheckToken(token string) bool {
-	_, err := jwt.Parse(token, func(*jwt.Token) (interface{}, error) {
+func CheckToken(token string) (jwt.MapClaims, bool) {
+	tokenvaild, err := jwt.Parse(token, func(*jwt.Token) (interface{}, error) {
 		return key, nil
 	})
 	if err != nil {
 		fmt.Println("parase with claims failed.", err)
-		return false
+		return nil, false
 	}
-	return true
+	claims, _ := tokenvaild.Claims.(jwt.MapClaims)
+	return claims, true
 }

@@ -159,3 +159,29 @@ func (this *VerifyController) Reject() {
 	}
 	this.ServeJSON()
 }
+func (this *VerifyController) View() {
+	id, _ := strconv.Atoi(this.GetString("id"))
+	member := new(VerifyUser)
+	o := orm.NewOrm()
+	qb, _ := orm.NewQueryBuilder("mysql")
+
+	// 构建查询对象
+	qb.Select("a.id,a.username,a.realname,a.phone,a.worktype,a.workaddress,a.updatetime,b.zonename,isverify").
+		From("members as a").
+		LeftJoin("zones as b").
+		On("a.zone = b.id").
+		LeftJoin("role_member as c").
+		On("a.id = c.user_id").
+		Where("a.id = ?")
+	sql := qb.String()
+	err := o.Raw(sql, id).QueryRow(&member)
+	if err != nil {
+		beego.Error(err)
+	}
+	this.Data["member"] = member
+	this.TplName = "admin/verify_view.html"
+}
+
+func (this *VerifyController) Tongji() {
+	this.TplName = "admin/verify_tongji.html"
+}

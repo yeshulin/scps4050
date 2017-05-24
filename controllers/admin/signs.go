@@ -105,14 +105,19 @@ func (this *SignsController) Get() {
 func (this *SignsController) View() {
 	id, _ := strconv.Atoi(this.GetString("id"))
 	o := orm.NewOrm()
-	signs := new(models.Signs)
-	signs.Id = id
-	err := o.Read(signs)
-
-	if err == orm.ErrNoRows {
-		fmt.Println("查询不到")
-	} else if err == orm.ErrMissPK {
-		fmt.Println("找不到主键")
+	signs := new(SignsList)
+	qb, _ := orm.NewQueryBuilder("mysql")
+	qb.Select("a.id,a.years,a.months,a.addtime,a.updatetime,a.postion,a.isverify,b.realname,c.zonename").
+		From("signs as a").
+		LeftJoin("members as b").
+		On("a.userid = b.id").
+		LeftJoin("zones as c").
+		On("b.zone = c.id").
+		Where("a.id = ?")
+	sql := qb.String()
+	err := o.Raw(sql, id).QueryRow(&signs)
+	if err != nil {
+		beego.Error(err)
 	}
 	this.Data["signs"] = signs
 	this.TplName = "admin/signs_view.html"

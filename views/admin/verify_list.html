@@ -15,7 +15,7 @@
 
 <fieldset class="layui-elem-field layui-field-title">
     <legend>
-        <span class="layui-breadcrumb">
+        <span class="layui-breadcrumb" style="display:block">
             <a href="/admin">首页</a>
             <a><cite>资料审核</cite></a>
         </span>
@@ -80,10 +80,7 @@
                   ],  //取消默认排序查询,否则复选框一列会出现小箭头
                   renderer: "bootstrap",  //渲染样式：Bootstrap和jquery-ui
                   pagingType: "full_numbers",  //分页样式：simple,simple_numbers,full,full_numbers
-                  "columnDefs": [ {
-                      "targets": 8,
-                      "defaultContent": ' <button class="layui-btn layui-btn-small view">查看</button><button class="layui-btn layui-btn-small layui-btn-normal pass">通过</button><button class="layui-btn layui-btn-small layui-btn-warm reject">驳回</button>'
-                  } ],
+                  
                   ajax: function (data, callback, settings) {
 				
                       //封装请求参数
@@ -132,8 +129,32 @@
 			        { data: 'Phone' },
 					{ data: 'Worktype' },
 			        { data: 'Zonename' },
-			        { data: 'Isverify' },
-					{ data: 'Updatetime'}
+			        { 
+						data: 'Isverify',
+						render:function(data, type, row, meta){
+							if(data==1){
+								return '通过';
+							}else if(data ==-1){
+								return '驳回';
+							}else{
+								return '待审';
+							}
+						}
+					},
+					{ data: 'Updatetime'},
+					{
+				       "data": "isverify",
+				       "orderable": false, // 禁用排序
+				       "defaultContent": "",
+				       "render": function (data, type, row, meta) {
+						   if(data==0){
+								return data = '<button class="layui-btn layui-btn-small view">查看</button><button class="layui-btn layui-btn-small layui-btn-normal pass">通过</button><button class="layui-btn layui-btn-small layui-btn-warm reject">驳回</button>';
+							}else{
+								return data = '<button class="layui-btn layui-btn-small view">查看</button>';
+							}
+				           
+				        }
+					},	
                   ],
                   "language": {
                       "processing": "加载中...",
@@ -208,6 +229,11 @@
                 }
             });
         } );
+		$('#dateTable tbody').on( 'click','.view',function () {
+            var data = dataTable.row( $(this).parents('tr') ).data();
+			
+			window.location="/admin/verify/view?id="+data.Id;
+		});	
 		 $('#dateTable tbody').on( 'click','.pass',function () {
 
             var data = dataTable.row( $(this).parents('tr') ).data();

@@ -48,7 +48,7 @@ func (this *UserController) Post() {
 	} else {
 		var roleuser RoleUser
 		qb, _ := orm.NewQueryBuilder("mysql")
-		qb.Select("a.id,a.role_id,a.user_id,b.name as rolename,c.username,c.realname").
+		qb.Select("a.id,a.role_id,b.name as role_name,a.user_id,b.name as rolename,c.username,c.realname").
 			From("role_member as a").
 			LeftJoin("role as b").On("a.role_id = b.id").
 			LeftJoin("members as c").On("a.user_id = c.id").
@@ -65,7 +65,7 @@ func (this *UserController) Post() {
 		if roleuser.Role_id < 1 {
 			this.Data["json"] = map[string]interface{}{"code": "0", "message": "用户没有权限!"}
 		} else {
-			token := hjwt.GenToken(member.Id, member.Username, member.Realname, member.Email, member.Phone)
+			token := hjwt.GenToken(member.Id, member.Username, member.Realname, member.Email, member.Phone, roleuser.Role_id, roleuser.Rolename)
 			this.Ctx.SetCookie("Authorization", token, 86400, "/")
 			//		this.Ctx.Redirect(302, "/admin")
 			this.Data["json"] = map[string]interface{}{"code": "1", "message": "success", "data": member.Username}
@@ -190,6 +190,7 @@ type MemberList struct {
 	Password string `密码`
 	Realname string `真实姓名`
 	Zone     int    `区域`
+	Zonename string `区域名称`
 	Email    string `邮箱`
 	Phone    string `电话`
 	Name     string `角色名`
@@ -217,12 +218,14 @@ func (this *UserController) Get() {
 	qb, _ := orm.NewQueryBuilder("mysql")
 
 	// 构建查询对象
-	qb.Select("a.id,a.username,a.realname,a.email,a.phone,a.zone,c.name").
+	qb.Select("a.id,a.username,a.realname,a.email,a.phone,a.zone,c.name,d.zonename").
 		From("members as a").
 		LeftJoin("role_member as b").
 		On("a.id=b.user_id").
 		LeftJoin("role as c").
 		On("b.role_id = c.id").
+		LeftJoin("zones as d").
+		On("a.zone = d.id").
 		Where(where).
 		OrderBy(sort).Desc().
 		Limit(ilimit).Offset(istart)
@@ -234,12 +237,14 @@ func (this *UserController) Get() {
 	/*查询总量*/
 	qbs, _ := orm.NewQueryBuilder("mysql")
 	var counts []MemberList
-	qbs.Select("a.id,a.username,a.realname,a.email,a.phone,a.zone,c.name").
+	qbs.Select("a.id,a.username,a.realname,a.email,a.phone,a.zone,c.name,d.zonename").
 		From("members as a").
 		LeftJoin("role_member as b").
 		On("a.id=b.user_id").
 		LeftJoin("role as c").
 		On("b.role_id = c.id").
+		LeftJoin("zones as d").
+		On("a.zone = d.id").
 		Where(where).
 		OrderBy(sort).Desc()
 	sqls := qbs.String()

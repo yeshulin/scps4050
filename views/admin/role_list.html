@@ -125,7 +125,16 @@
                   columns: [
 	                { data: 'Id' },
 			        { data: 'Name' },
-			        { data: 'Status' },
+			        { 
+						data: 'Status' ,
+						render:function(data, type, row, meta){
+							if(data==1){
+								return '正常';
+							}else{
+								return '锁定';
+							}
+						}
+					},
 			        { data: 'Addtime' },
 			        { data: 'Updatetime' }
                   ],
