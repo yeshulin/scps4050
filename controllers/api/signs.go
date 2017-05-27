@@ -31,7 +31,6 @@ func (this *SignsController) Post() {
 	if err != nil {
 		this.Data["json"] = map[string]interface{}{"code": "0", "message": "fail!"}
 	} else {
-
 		this.Data["json"] = map[string]interface{}{"code": "1", "message": "success!", "data": id}
 	}
 	this.ServeJSON()

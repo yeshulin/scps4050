@@ -6,9 +6,11 @@ import (
 
 type Members struct {
 	Id          int    `orm:"pk"`
+	Openid      string `openid`
 	Username    string `用户名`
 	Password    string `密码`
 	Realname    string `真实姓名`
+	Avatarurl   string `用户头像`
 	Sex         string `性别`
 	Bothtime    string `出生时间`
 	Zone        int    `区域`

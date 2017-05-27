@@ -9,6 +9,5 @@ type ApibaseController struct {
 }
 
 func (this *ApibaseController) Prepare() {
-	beego.LoadAppConfig("ini", "conf/web.conf")
 	this.Data["Website"] = beego.AppConfig.String("Website")
 }

@@ -4,6 +4,7 @@ import (
 	"html/template"
 	//"net/http"
 	//"crypto/aes"
+	"crypto/tls"
 	"encoding/base64"
 	"fmt"
 	"strconv"
@@ -14,6 +15,7 @@ import (
 	"webproject/4050/models"
 
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/httplib"
 	"github.com/astaxie/beego/orm"
 	//	jwt "github.com/dgrijalva/jwt-go"
 	//	"github.com/astaxie/beego/validation"
@@ -112,6 +114,42 @@ func (this *UserController) Reg() {
 	} else {
 		this.Data["json"] = map[string]interface{}{"code": "1", "message": "success!", "data": id}
 	}
+	this.ServeJSON()
+}
+
+type WeixinResult struct {
+	session_key string `会话密钥`
+	openid      string `用户唯一标识`
+	expires_in  int    `过期时间`
+}
+
+func (this *UserController) RegWeixin() {
+	code := this.GetString("code")
+	fmt.Println(code)
+	AppID := beego.AppConfig.String("wxAppID")
+	AppSecret := beego.AppConfig.String("wxAppSecret")
+	httpUrl := "https://api.weixin.qq.com/sns/jscode2session?appid=" + AppID + "&secret=" + AppSecret + "&js_code=" + code + "&grant_type=authorization_code"
+	fmt.Println(httpUrl)
+	result := make(map[string]interface{})
+	req := httplib.Get(httpUrl)
+	req.SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true})
+	req.ToJSON(&result)
+	//	fmt.Println(result["session_key"])
+	aesencrypt := new(aesencrypt.AesEncrypt)
+	password, err := aesencrypt.Encrypt("123456")
+	if err != nil {
+		beego.Error(err)
+	}
+	o := orm.NewOrm()
+	member := new(models.Members)
+	//fmt.Println(password)
+	member.Openid = result["openid"].(string)
+	member.Password = base64.StdEncoding.EncodeToString(password)
+	member.Addtime = time.Now().Unix()
+	member.Updatetime = time.Now().Unix()
+	id, err := o.Insert(member)
+	result["id"] = id
+	this.Data["json"] = map[string]interface{}{"code": "0", "message": "success!", "data": result}
 	this.ServeJSON()
 }
 

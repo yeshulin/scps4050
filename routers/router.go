@@ -14,6 +14,7 @@ func init() {
 	beego.Router("/admin/logout", &admin.UserController{}, "get:LogOut")
 	beego.Router("/user/login", &admin.UserController{}, "post:Post")
 	beego.Router("/user/reg", &admin.UserController{}, "post:Reg")
+	beego.Router("/user/regweixin", &admin.UserController{}, "post:RegWeixin")
 	beego.Router("/user/apply", &admin.UserController{}, "post:Apply")
 	beego.Router("/user/verify", &admin.UserController{}, "post:Verify")
 	beego.Router("/register", &admin.UserController{}, "get:Register")
@@ -89,6 +90,7 @@ func init() {
 	beego.Router("/file/upload", &controllers.FileController{}, "post:Upload;get:Upload")
 	beego.Router("/file/uploadpage", &controllers.FileController{}, "get:UploadPage")
 	beego.Router("/api/signs", &api.SignsController{})
+	beego.Router("/api/zones", &api.ZonesController{})
 	/*oss路由*/
 	beego.Router("/oss/webupload", &controllers.OssController{}, "get:WebUpload")
 }
