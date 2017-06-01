@@ -141,22 +141,31 @@ func (this *UserController) RegWeixin() {
 		beego.Error(err)
 	}
 	o := orm.NewOrm()
-	member := new(models.Members)
-	//fmt.Println(password)
-	member.Openid = result["openid"].(string)
-	member.Password = base64.StdEncoding.EncodeToString(password)
-	member.Addtime = time.Now().Unix()
-	member.Updatetime = time.Now().Unix()
-	id, err := o.Insert(member)
-	result["id"] = id
-	this.Data["json"] = map[string]interface{}{"code": "0", "message": "success!", "data": result}
+	meminfo := models.Members{Openid: result["openid"].(string)}
+	err = o.Read(&meminfo, "openid")
+	if err != nil {
+		member := new(models.Members)
+		//fmt.Println(password)
+		member.Openid = result["openid"].(string)
+		member.Password = base64.StdEncoding.EncodeToString(password)
+		member.Addtime = time.Now().Unix()
+		member.Updatetime = time.Now().Unix()
+		id, _ := o.Insert(member)
+		result["id"] = id
+		this.Data["json"] = map[string]interface{}{"code": "0", "message": "success!", "data": result}
+	} else {
+		result["id"] = meminfo.Id
+		this.Data["json"] = map[string]interface{}{"code": "0", "message": "success!", "data": result}
+	}
 	this.ServeJSON()
 }
 
 func (this *UserController) Apply() {
 	o := orm.NewOrm()
 	id, _ := strconv.Atoi(this.GetString("id"))
+
 	zone, _ := strconv.Atoi(this.GetString("zone"))
+	years := this.GetString("years")
 	member := models.Members{Id: id}
 
 	err := o.Read(&member)
@@ -166,26 +175,58 @@ func (this *UserController) Apply() {
 	} else if err == orm.ErrMissPK {
 		this.Data["json"] = map[string]interface{}{"code": "0", "message": "找不到用户!"}
 	} else {
+		member.Username = this.GetString("username")
 		member.Realname = this.GetString("realname")
+		member.Avatarurl = this.GetString("avatarurl")
 		member.Sex = this.GetString("sex")
 		member.Bothtime = this.GetString("bothtime")
-		member.Zone = zone
+		member.Zone = zone + 1
 		member.Address = this.GetString("address")
 		member.Email = this.GetString("email")
 		member.Phone = this.GetString("phone")
 		member.Workaddress = this.GetString("workaddress")
 		member.Worktype = this.GetString("worktype")
-		fmt.Println(member)
 		if num, err := o.Update(&member); err == nil {
-			this.Data["json"] = map[string]interface{}{"code": "0", "message": "success!", "data": num}
+			applys := models.Applys{Userid: id, Years: years}
+			err = o.Read(&applys, "userid", "years")
+			if err != nil {
+				applys1 := new(models.Applys)
+				applys1.Userid = id
+				applys1.Years = this.GetString("years")
+				applys1.Workaddress = this.GetString("workaddress")
+				applys1.Worktype = this.GetString("worktype")
+				applys1.Addtime = time.Now().Unix()
+				applys1.Updatetime = time.Now().Unix()
+				if id, err := o.Insert(applys1); err == nil {
+					fmt.Println(id)
+					this.Data["json"] = map[string]interface{}{"code": "0", "message": "success!", "data": num}
+				} else {
+					this.Data["json"] = map[string]interface{}{"code": "0", "message": "提交申请失败!"}
+				}
+			} else {
+				this.Data["json"] = map[string]interface{}{"code": "0", "message": "你已经提交过本年度资料!"}
+			}
+
 		} else {
 			this.Data["json"] = map[string]interface{}{"code": "0", "message": "提交申请失败!"}
 		}
-
 	}
 	this.ServeJSON()
 }
 
+func (this *UserController) GetApply() {
+	o := orm.NewOrm()
+	userid, _ := strconv.Atoi(this.GetString("userid"))
+	years := this.GetString("years")
+	applys := models.Applys{Userid: userid, Years: years, Isverify: 1}
+	err := o.Read(&applys, "userid", "years", "isverify")
+	if err != nil {
+		this.Data["json"] = map[string]interface{}{"code": "0", "message": "当前资料未审核不能签到!"}
+	} else {
+		this.Data["json"] = map[string]interface{}{"code": "1", "message": "可以签到!"}
+	}
+	this.ServeJSON()
+}
 func (this *UserController) Verify() {
 	o := orm.NewOrm()
 	id, _ := strconv.Atoi(this.GetString("id"))

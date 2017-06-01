@@ -3,7 +3,7 @@ package controllers
 import (
 	"fmt"
 	//	"strconv"
-	//	"time"
+	"time"
 
 	"github.com/astaxie/beego"
 )
@@ -14,21 +14,26 @@ type FileController struct {
 
 func (this *FileController) Upload() {
 	f, h, err := this.GetFile("file")
-	defer f.Close()
-	//	year := strconv.Itoa(time.Now().Year())
-	//	month := time.Now().Month().String()
-	//	day := strconv.Itoa(time.Now().Day())
-	fmt.Println(beego.AppConfig.String("UploadPath"))
-
-	path := beego.AppConfig.String("UploadPath") + h.Filename
-
 	if err != nil {
+		json := map[string]interface{}{"code": "0", "message": "fail!"}
+		this.Data["json"] = json
 		beego.Error(err)
 	} else {
-		this.SaveToFile("file", path) // 保存位置在 static/upload, 没有文件夹要先创建
+		defer f.Close()
+
+		//	year := strconv.Itoa(time.Now().Year())
+		//	month := time.Now().Month().String()
+		//	day := strconv.Itoa(time.Now().Day())
+		// 获取当前年月
+		datePath := time.Now().Format("2006/01/01")
+		// 设置保存目录
+		dirPath := beego.AppConfig.String("UploadPath") + datePath
+		fmt.Println(h.Filename)
+
+		this.SaveToFile("file", fmt.Sprintf("%s/%s", dirPath, h.Filename))
+		json := map[string]interface{}{"code": "1", "message": "success!", "data": fmt.Sprintf("%s/%s", dirPath, h.Filename)}
+		this.Data["json"] = json
 	}
-	json := map[string]interface{}{"code": "1", "message": "success!", "data": path}
-	this.Data["json"] = json
 	this.ServeJSON()
 
 }

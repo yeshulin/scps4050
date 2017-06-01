@@ -10,10 +10,32 @@ Target Server Type    : MYSQL
 Target Server Version : 50629
 File Encoding         : 65001
 
-Date: 2017-05-27 18:47:02
+Date: 2017-06-01 15:57:49
 */
 
 SET FOREIGN_KEY_CHECKS=0;
+
+-- ----------------------------
+-- Table structure for `applys`
+-- ----------------------------
+DROP TABLE IF EXISTS `applys`;
+CREATE TABLE `applys` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '申请ID',
+  `userid` int(11) DEFAULT NULL COMMENT '用户ID',
+  `years` varchar(20) DEFAULT NULL COMMENT '年度',
+  `worktype` varchar(255) DEFAULT NULL COMMENT '灵活就业形式',
+  `workaddress` varchar(255) DEFAULT NULL COMMENT '灵活就业地址',
+  `isverify` int(4) DEFAULT NULL COMMENT '是否审核通过用户',
+  `remark` varchar(255) DEFAULT NULL COMMENT '备注 ',
+  `addtime` int(11) DEFAULT NULL,
+  `updatetime` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of applys
+-- ----------------------------
+INSERT INTO `applys` VALUES ('3', '97', '2017', '487787', '7878', '1', '', '1496215067', '1496215067');
 
 -- ----------------------------
 -- Table structure for `members`
@@ -39,7 +61,7 @@ CREATE TABLE `members` (
   `addtime` int(11) DEFAULT NULL,
   `updatetime` int(11) DEFAULT NULL,
   PRIMARY KEY (`Id`)
-) ENGINE=MyISAM AUTO_INCREMENT=93 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=98 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of members
@@ -47,19 +69,7 @@ CREATE TABLE `members` (
 INSERT INTO `members` VALUES ('40', null, 'yeshulin1', 'RE7+OOlq', '叶树林', null, null, null, null, null, '1914875404@qq.com', '13512341234', null, null, null, null, '1494651921', '1494651921');
 INSERT INTO `members` VALUES ('60', null, 'liqing', 'RE7+OOlq', '李清', null, '', '', '1', '', '1914875404@qq.com', '13512344321', '', '', '0', '', '1495510178', '1495510178');
 INSERT INTO `members` VALUES ('61', null, 'apply', 'RE7+OOlq', '申请人员', null, '', '', '2', '', '1914875404@qq.com', '13512341234', '', '', '-1', '343443', '1495529419', '1495529419');
-INSERT INTO `members` VALUES ('80', '', '', 'RE7+OOlq', '', '', '', '', '0', '', '', '', '', '', '0', '', '1495878975', '1495878975');
-INSERT INTO `members` VALUES ('81', '', '', 'RE7+OOlq', '', '', '', '', '0', '', '', '', '', '', '0', '', '1495879041', '1495879041');
-INSERT INTO `members` VALUES ('82', '', '', 'RE7+OOlq', '', '', '', '', '0', '', '', '', '', '', '0', '', '1495879214', '1495879214');
-INSERT INTO `members` VALUES ('83', '', '', 'RE7+OOlq', '', '', '', '', '0', '', '', '', '', '', '0', '', '1495879283', '1495879283');
-INSERT INTO `members` VALUES ('84', '', '', 'RE7+OOlq', '', '', '', '', '0', '', '', '', '', '', '0', '', '1495879700', '1495879700');
-INSERT INTO `members` VALUES ('85', '', '', 'RE7+OOlq', '', '', '', '', '0', '', '', '', '', '', '0', '', '1495879730', '1495879730');
-INSERT INTO `members` VALUES ('86', '', '', 'RE7+OOlq', '', '', '', '', '0', '', '', '', '', '', '0', '', '1495879737', '1495879737');
-INSERT INTO `members` VALUES ('87', '', '', 'RE7+OOlq', '', '', '', '', '0', '', '', '', '', '', '0', '', '1495881177', '1495881177');
-INSERT INTO `members` VALUES ('88', '', '', 'RE7+OOlq', '', '', '', '', '0', '', '', '', '', '', '0', '', '1495881206', '1495881206');
-INSERT INTO `members` VALUES ('89', '', '', 'RE7+OOlq', '', '', '', '', '0', '', '', '', '', '', '0', '', '1495881245', '1495881245');
-INSERT INTO `members` VALUES ('90', '', '', 'RE7+OOlq', '', '', '', '', '0', '', '', '', '', '', '0', '', '1495881250', '1495881250');
-INSERT INTO `members` VALUES ('91', 'oSEQM0Y_zAMtRsj0rmBgfh001rEI', '', 'RE7+OOlq', '', '', '', '', '0', '', '', '', '', '', '0', '', '1495881478', '1495881478');
-INSERT INTO `members` VALUES ('92', 'oSEQM0Y_zAMtRsj0rmBgfh001rEI', '', 'RE7+OOlq', '', '', '', '', '0', '', '', '', '', '', '0', '', '1495881487', '1495881487');
+INSERT INTO `members` VALUES ('97', 'oSEQM0Y_zAMtRsj0rmBgfh001rEI', '510824198510156250', 'RE7+OOlq', '张三', 'http://wx.qlogo.cn/mmopen/vi_32/PmjeqwcIVaVWxQsppOSH4NiaPZZibuPBMnX04hWJd8Yf7TcDKFoAox4yCsbicNJibhHHbXaP9zJp2d7BheS5ktiaPAw/0', '男', '1970-09-01', '1', '13512341234', '', '13512341234', '44578', '45458787', '0', '', '1496198454', '1496198454');
 
 -- ----------------------------
 -- Table structure for `news`
@@ -202,30 +212,12 @@ CREATE TABLE `signs` (
   `addtime` int(11) DEFAULT NULL COMMENT '签到时间',
   `updatetime` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
 -- Records of signs
 -- ----------------------------
-INSERT INTO `signs` VALUES ('1', '2323', '', '0', '', '', '-1', '3434342', '0', '1495455495');
-INSERT INTO `signs` VALUES ('9', '', '', '0', '', '', '0', '', '1495787124', '1495787124');
-INSERT INTO `signs` VALUES ('10', '', '', '0', '', '', '0', '', '1495787168', '1495787168');
-INSERT INTO `signs` VALUES ('11', '', '', '0', '', '', '0', '', '1495787198', '1495787198');
-INSERT INTO `signs` VALUES ('12', '', '', '0', '', '', '0', '', '1495787204', '1495787204');
-INSERT INTO `signs` VALUES ('13', '', '', '0', '', '', '0', '', '1495787226', '1495787226');
-INSERT INTO `signs` VALUES ('14', '', '', '0', '', '', '0', '', '1495787245', '1495787245');
-INSERT INTO `signs` VALUES ('15', '', '', '0', '', '', '0', '', '1495787288', '1495787288');
-INSERT INTO `signs` VALUES ('16', '', '', '0', '', '', '0', '', '1495787304', '1495787304');
-INSERT INTO `signs` VALUES ('17', '', '', '0', '', '', '0', '', '1495787399', '1495787399');
-INSERT INTO `signs` VALUES ('18', '', '', '0', '', '', '0', '', '1495787411', '1495787411');
-INSERT INTO `signs` VALUES ('19', '', '', '0', '', '', '0', '', '1495787488', '1495787488');
-INSERT INTO `signs` VALUES ('20', '', '', '0', '', '', '0', '', '1495787581', '1495787581');
-INSERT INTO `signs` VALUES ('21', '', '', '0', '', '', '0', '', '1495787687', '1495787687');
-INSERT INTO `signs` VALUES ('22', '', '', '0', '', '', '0', '', '1495787702', '1495787702');
-INSERT INTO `signs` VALUES ('23', '', '', '0', '', '', '0', '', '1495787731', '1495787731');
-INSERT INTO `signs` VALUES ('24', '', '', '0', '', '', '0', '', '1495787807', '1495787807');
-INSERT INTO `signs` VALUES ('25', '', '', '0', '', '', '0', '', '1495787837', '1495787837');
-INSERT INTO `signs` VALUES ('26', '', '', '0', '', '', '0', '', '1495787855', '1495787855');
+INSERT INTO `signs` VALUES ('36', '2017', '2', '97', '12,13', 'wxfile://tmp_978623644o6zAJs3y6kN2k75lvB678poPYuv0c90f9abb7e0bde5bb6bab22f5704ea55.jpg,wxfile://tmp_978623644o6zAJs3y6kN2k75lvB678poPYuv0c90f9abb7e0bde5bb6bab22f5704ea55.jpg', '0', '', '1496234034', '1496234034');
 
 -- ----------------------------
 -- Table structure for `zones`
