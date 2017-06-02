@@ -83,9 +83,233 @@
     
     </tbody>
 </table>
-<script src="/static/vipadmin/frame/layui/layui.js" charset="utf-8"></script>
+
+<table id="dateTable" class="layui-table">
+    <thead>
+    <tr>
+        <th><input type="checkbox" class="my-checkbox" /></th>
+        <th>年度</th>
+        <th>灵活就业形式</th>
+		<th>灵活就业地址</th>
+        <th>是否审核</th>
+		<th>备注</th>
+        <th>操作</th>
+    </tr>
+    </thead>
+   
+</table>
+
+<script type="text/javascript" src="/static/vipadmin/frame/layui/layui.js"></script>
+<!-- jQuery -->
+<script type="text/javascript" charset="utf8" src="/static/vipadmin/js/jquery.js"></script>
+<script type="text/javascript" src="/static/vipadmin/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="/static/vipadmin/js/table-tool.js"></script>
 <script type="text/javascript">
-layui.use(['element','form'], function(){})
+    layui.use(['element','form'], function(){
+        var $ = layui.jquery,element = layui.element,layer = layui.layer;
+		var form = layui.form();
+
+        // 初始化表格
+       /* $('#dateTable').DataTable({
+            "dom": '<"top">rt<"bottom"flp><"clear">',
+            "autoWidth": false,                     // 自适应宽度
+            "stateSave": true,                      // 刷新后保存页数
+            "order": [[ 1, "desc" ]],               // 排序
+            "searching": false,                     // 本地搜索
+            "info": true,                           // 控制是否显示表格左下角的信息
+            "stripeClasses": ["odd", "even"],       // 为奇偶行加上样式，兼容不支持CSS伪类的场合
+            "aoColumnDefs": [{                      // 指定列不参与排序
+                "orderable": false,
+                "aTargets": [0,7]                   // 对应你的表格的列数
+            }],
+            "pagingType": "simple_numbers",         // 分页样式 simple,simple_numbers,full,full_numbers
+            "language": {                           // 国际化
+                "url":'language.json'
+            }
+        });
+		*/
+		var dataTable = $('#dateTable').DataTable( {
+                  autoWidth: false,  //禁用自动调整列宽
+                  stripeClasses: ["odd", "even"],  //为奇偶行加上样式，兼容不支持CSS伪类的场合
+                  processing: true,  //隐藏加载提示,自行处理
+                  serverSide: true,  //启用服务器端分页
+                  //searching: false,  //禁用原生搜索
+                  orderMulti: false,  //启用多列排序
+                  order: [
+                      [0,'desc']
+                  ],  //取消默认排序查询,否则复选框一列会出现小箭头
+                  renderer: "bootstrap",  //渲染样式：Bootstrap和jquery-ui
+                  pagingType: "full_numbers",  //分页样式：simple,simple_numbers,full,full_numbers
+                  "columnDefs": [ {
+                      "targets": 5,
+                      "defaultContent": '<button class="layui-btn layui-btn-small layui-btn-danger delete">删除</button>'
+                  } ],
+                  ajax: function (data, callback, settings) {
+				
+                      //封装请求参数
+                      var param = {};
+                      var orderColumnNum = data.order[0]['column'];
+                      param.sortColumn = data.columns[orderColumnNum].data;
+                      //param.order = data.order[0]['dir'];
+                      param.limit = data.length;//页面显示记录条数，在页面显示每页显示多少项的时候
+                      param.start = data.start;//开始的记录序号
+                      param.page = (data.start / data.length)+1;//当前页码
+                      param.search = data['search']['value'];
+					  param.userid = {{.member.Id}};
+					  console.log(param)
+                      //ajax请求数据
+                      $.ajax({
+                          type: "GET",
+                          url: "/admin/verify/applys",
+                          cache: false,  //禁用缓存
+                          data: param,  //传入组装的参数
+                          dataType: "json",
+                          success: function (result) {
+							
+                              console.log(result);
+                              //setTimeout仅为测试延迟效果
+							//console.log(result);
+                              setTimeout(function () {
+                                  //封装返回数据
+                                  var returnData = {};
+                                  //returnData.draw = data.draw;//这里直接自行返回了draw计数器,应该由后台返回
+                                  returnData.recordsTotal = result.total;//返回数据全部记录
+                                  returnData.recordsFiltered = result.total;//后台不实现过滤功能，每次查询均视作全部结果
+                                  returnData.data = result.data;//返回的数据列表
+                                  //console.log(returnData);
+                                  //调用DataTables提供的callback方法，代表数据已封装完成并传回DataTables进行渲染
+                                  //此时的数据需确保正确无误，异常判断应在执行此回调前自行处理完毕
+                                  callback(returnData);
+                              }, 200);
+                          }
+                      });
+                  },
+
+                  //列表表头字段
+                  columns: [
+	                { data: 'Id' },
+			        { data: 'Years' },
+			        { data: 'Worktype' },
+			        { data: 'Workaddress' },
+			        { 
+						data: 'Isverify',
+						render:function(data, type, row, meta){
+							if(data==1){
+								return '通过';
+							}else if(data ==-1){
+								return '驳回';
+							}else{
+								return '待审';
+							}
+						}
+					},
+					{data:'Remark'},
+					{
+				       data: "Isverify",
+				       "orderable": false, // 禁用排序
+				       "defaultContent": "",
+				       "render": function (data, type, row, meta) {
+						   if(data==0){
+								return data = '<button class="layui-btn layui-btn-small layui-btn-normal pass">通过</button><button class="layui-btn layui-btn-small layui-btn-warm reject">驳回</button>';
+							}else{
+								return data = '';
+							}
+				           
+				        }
+					},	
+                  ],
+                  "language": {
+                      "processing": "加载中...",
+                      "lengthMenu": "显示 _MENU_ 条结果",
+                      "zeroRecords": "没有匹配结果",
+                      "info": "显示第 _START_ 至 _END_ 条结果，共 _TOTAL_ 条",
+                      "infoEmpty": "显示第 0 至 0 条结果，共 0 条",
+                      "infoFiltered": "(由 _MAX_ 项结果过滤)",
+                      "infoPostFix": "",
+                      "search": "搜索:",
+                      "searchPlaceholder": "搜索...",
+                      "url": "",
+                      "emptyTable": "表中数据为空",
+                      "loadingRecords": "载入中...",
+                      "infoThousands": ",",
+                      "paginate": {
+                          "first": "首页",
+                          "previous": "上页",
+                          "next": "下页",
+                          "last": "末页"
+                      },
+                      "aria": {
+                          paginate: {
+                              first: '首页',
+                              previous: '上页',
+                              next: '下页',
+                              last: '末页'
+                          },
+                          "sortAscending": ": 以升序排列此列",
+                          "sortDescending": ": 以降序排列此列"
+                      },
+                      "decimal": "-",
+                      "thousands": "."
+                  }
+
+              });
+		
+        // 例:获取ids
+        $(document).on('click','#btn-delete-all', function(){
+            // getIds(table对象,获取input为id的属性)
+            var list = getIds($('#dateTable'),'data-id');
+            if(list == null || list == ''){
+                layer.msg('未选择');
+            }else{
+                layer.msg(list);
+            }
+        });
+		
+         $('#dateTable tbody').on( 'click','.pass',function () {
+
+            var data = dataTable.row( $(this).parents('tr') ).data();
+			//console.log(data);
+            layer.confirm('你确定要通过id：'+ data.Id +' 吗', {
+                time: 0 //不自动关闭
+                ,btn: ['确认', '取消']
+                ,yes: function(index){
+                    layer.close(index);
+                    layer.msg('正在通过', {
+                        icon: 16,
+                        btnAlign: 'c',
+                        btn: ['确认'],
+                        time: 1000
+                    });
+					$.post("/admin/verify/passapplys",{id:data.Id},function(data){
+						if(data.code==1){
+							window.location = "/admin/verify/view?id="+{{.member.Id}};
+						}else{
+							layer.msg('审核资料失败！');
+						}
+					},"json")
+                    
+                }
+            });
+        } );
+		$('#dateTable tbody').on( 'click','.reject',function () {
+            var data = dataTable.row( $(this).parents('tr') ).data();
+	
+			layer.prompt({title: '拒绝原因', formType: 2}, function(text, index){
+			    layer.close(index);
+				//console.log(text)
+				$.post("/admin/verify/rejectapplys",{id:data.Id,remark:text},function(data){
+						if(data.code==1){
+							window.location = "/admin/verify/view?id="+{{.member.Id}};
+						}else{
+							layer.msg('拒绝审核失败！');
+						}
+					},"json")
+			  });
+        } );
+	
+		
+    });
+	 
 </script>
 
 </body>

@@ -7,6 +7,8 @@ import (
 	"webproject/4050/controllers"
 	"webproject/4050/models"
 
+	"webproject/4050/common/hjwt"
+
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 )
@@ -35,6 +37,8 @@ type SignsList struct {
 }
 
 func (this *SignsController) Get() {
+	cookie := this.Ctx.GetCookie("Authorization")
+	Claims, _ := hjwt.CheckToken(cookie)
 	id := this.GetString("id")
 	limit := "10"
 	start := this.GetString("start")
@@ -47,6 +51,13 @@ func (this *SignsController) Get() {
 	o := orm.NewOrm()
 	var maps []SignsList
 	//fmt.Println(id)
+	zone_id := Claims["zone"].(float64)
+	zone := strconv.FormatFloat(zone_id, 'f', 0, 64)
+	role_id := Claims["role_id"].(float64)
+	fmt.Println(zone_id)
+	if role_id == 2 {
+		where = where + " and c.id = " + zone
+	}
 	if id != "" {
 		where = where + " and a.id = " + id
 	}

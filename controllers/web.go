@@ -14,16 +14,19 @@ type WebController struct {
 }
 
 func (this *WebController) Prepare() {
+	cookie := this.Ctx.GetCookie("Authorization")
+	fmt.Println(cookie)
+	Claims, _ := hjwt.CheckToken(cookie)
 	beego.InsertFilter("/admin/*", beego.BeforeRouter, func(ctx *context.Context) {
-		cookie := this.Ctx.GetCookie("Authorization")
-		Claims, _ := hjwt.CheckToken(cookie)
 		cookie1, err := ctx.Request.Cookie("Authorization")
 		_, isok1 := hjwt.CheckToken(cookie1.Value)
 		if err != nil || !isok1 {
 			http.Redirect(ctx.ResponseWriter, ctx.Request, "/login", http.StatusMovedPermanently)
 		}
-		fmt.Println(Claims)
-		this.Data["Claims"] = Claims
+		//		fmt.Println(cookie)
+		//		fmt.Println("yeshulin")
+
 	})
+	this.Data["Claims"] = Claims
 	this.Data["Website"] = beego.AppConfig.String("Website")
 }

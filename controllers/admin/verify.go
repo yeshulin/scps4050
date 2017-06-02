@@ -6,8 +6,9 @@ import (
 	"webproject/4050/controllers"
 	"webproject/4050/models"
 
-	"github.com/astaxie/beego"
+	"webproject/4050/common/hjwt"
 
+	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 )
 
@@ -30,6 +31,7 @@ type VerifyUser struct {
 	Address     string `地址`
 	Email       string `邮箱`
 	Workaddress string `就业地址`
+	Avatarurl   string `用户头像`
 	Worktype    string `就业形式`
 	Phone       string `电话`
 	Isverify    int    `是否审核用户`
@@ -39,6 +41,8 @@ type VerifyUser struct {
 }
 
 func (this *VerifyController) Get() {
+	cookie := this.Ctx.GetCookie("Authorization")
+	Claims, _ := hjwt.CheckToken(cookie)
 	id := this.GetString("id")
 	limit := "10"
 	start := this.GetString("start")
@@ -50,7 +54,14 @@ func (this *VerifyController) Get() {
 	where := "c.role_id is null"
 	o := orm.NewOrm()
 	var maps []VerifyUser
-	fmt.Println(id)
+	//	fmt.Println(id)
+	zone_id := Claims["zone"].(float64)
+	zone := strconv.FormatFloat(zone_id, 'f', 0, 64)
+	role_id := Claims["role_id"].(float64)
+	fmt.Println(zone_id)
+	if role_id == 2 {
+		where = where + " and b.id = " + zone
+	}
 	if id != "" {
 		where = where + " and id = " + id
 	}
@@ -60,7 +71,7 @@ func (this *VerifyController) Get() {
 	qb, _ := orm.NewQueryBuilder("mysql")
 
 	// 构建查询对象
-	qb.Select("a.id,a.username,a.realname,a.phone,a.worktype,a.updatetime,b.zonename,isverify").
+	qb.Select("a.id,a.username,a.realname,a.phone,a.avatarurl,a.worktype,a.updatetime,b.zonename,a.isverify").
 		From("members as a").
 		LeftJoin("zones as b").
 		On("a.zone = b.id").
@@ -77,7 +88,7 @@ func (this *VerifyController) Get() {
 	/*查询总量*/
 	qbs, _ := orm.NewQueryBuilder("mysql")
 	var counts []VerifyUser
-	qbs.Select("a.id,a.username,a.realname,a.phone,a.worktype,a.updatetime,b.zonename,isverify").
+	qbs.Select("a.id,a.username,a.realname,a.phone,a.avatarurl,a.worktype,a.updatetime,b.zonename,a.isverify").
 		From("members as a").
 		LeftJoin("zones as b").
 		On("a.zone = b.id").
@@ -166,7 +177,7 @@ func (this *VerifyController) View() {
 	qb, _ := orm.NewQueryBuilder("mysql")
 
 	// 构建查询对象
-	qb.Select("a.id,a.username,a.realname,a.phone,a.worktype,a.workaddress,a.updatetime,b.zonename,isverify").
+	qb.Select("a.id,a.username,a.realname,a.sex,a.address,a.bothtime,a.phone,a.worktype,a.workaddress,a.addtime,a.updatetime,b.zonename,isverify").
 		From("members as a").
 		LeftJoin("zones as b").
 		On("a.zone = b.id").
@@ -184,4 +195,89 @@ func (this *VerifyController) View() {
 
 func (this *VerifyController) Tongji() {
 	this.TplName = "admin/verify_tongji.html"
+}
+
+func (this *VerifyController) Applys() {
+	userid := this.GetString("userid")
+	where := "1=1"
+	o := orm.NewOrm()
+	var maps []models.Applys
+	//fmt.Println(id)
+
+	if userid != "" {
+		where = where + " and a.userid = " + userid
+	}
+
+	qb, _ := orm.NewQueryBuilder("mysql")
+
+	// 构建查询对象
+	qb.Select("a.id,a.userid,a.years,a.addtime,a.updatetime,a.worktype,a.workaddress,a.isverify").
+		From("applys as a").
+		Where(where).
+		OrderBy("a.id").Desc()
+
+	// 导出 SQL 语句
+	sql := qb.String()
+	fmt.Println(sql)
+	num, _ := o.Raw(sql).QueryRows(&maps)
+
+	data := map[string]interface{}{"code": 0, "message": "success", "data": maps, "total": num}
+	this.Data["json"] = data
+	this.ServeJSON()
+}
+func (this *VerifyController) Passapplys() {
+
+	o := orm.NewOrm()
+	applys := new(models.Applys)
+
+	//fmt.Println(password)
+	id, err := strconv.Atoi(this.GetString("id"))
+	fmt.Println(id)
+
+	if err == nil {
+		applys.Id = id
+		//		fmt.Println(id)
+		//fmt.Println(o.Read(&member))
+		if o.Read(applys) == nil {
+			applys.Isverify = 1
+			id, err := o.Update(applys)
+			if err != nil {
+				beego.Error(err)
+			}
+			this.Data["json"] = map[string]interface{}{"code": "1", "message": "success!", "data": id}
+
+		} else {
+			this.Data["json"] = map[string]interface{}{"code": "0", "message": "fail!"}
+		}
+	}
+	this.ServeJSON()
+}
+
+func (this *VerifyController) Rejectapplys() {
+
+	o := orm.NewOrm()
+	applys := new(models.Applys)
+
+	//fmt.Println(password)
+	id, err := strconv.Atoi(this.GetString("id"))
+	fmt.Println(id)
+
+	if err == nil {
+		applys.Id = id
+		//		fmt.Println(id)
+		//fmt.Println(o.Read(&member))
+		if o.Read(applys) == nil {
+			applys.Isverify = -1
+			applys.Remark = this.GetString("remark")
+			id, err := o.Update(applys)
+			if err != nil {
+				beego.Error(err)
+			}
+			this.Data["json"] = map[string]interface{}{"code": "1", "message": "success!", "data": id}
+
+		} else {
+			this.Data["json"] = map[string]interface{}{"code": "0", "message": "fail!"}
+		}
+	}
+	this.ServeJSON()
 }

@@ -30,7 +30,7 @@
         <th>身份证号</th>
         <th>真实姓名</th>
         <th>电话</th>
-		<th>灵活就业形式</th>
+		<th>用户头像</th>
         <th>区域</th>
 		<th>是否审核</th>
 		<th>提交时间</th>
@@ -127,7 +127,12 @@
 			        { data: 'Username' },
 			        { data: 'Realname' },
 			        { data: 'Phone' },
-					{ data: 'Worktype' },
+					{ 
+						data: 'Avatarurl',
+					  	render:function(data, type, row, meta) {
+							return data = '<img src="'+data+'" width="60" height="60">'	
+						}	
+					},
 			        { data: 'Zonename' },
 			        { 
 						data: 'Isverify',
@@ -143,12 +148,12 @@
 					},
 					{ data: 'Updatetime'},
 					{
-				       "data": "isverify",
+				       "data": "Isverify",
 				       "orderable": false, // 禁用排序
 				       "defaultContent": "",
 				       "render": function (data, type, row, meta) {
 						   if(data==0){
-								return data = '<button class="layui-btn layui-btn-small view">查看</button><button class="layui-btn layui-btn-small layui-btn-normal pass">通过</button><button class="layui-btn layui-btn-small layui-btn-warm reject">驳回</button>';
+								return data = '<button class="layui-btn layui-btn-small view">查看</button><!--button class="layui-btn layui-btn-small layui-btn-normal pass">通过</button><button class="layui-btn layui-btn-small layui-btn-warm reject">驳回</button-->';
 							}else{
 								return data = '<button class="layui-btn layui-btn-small view">查看</button>';
 							}

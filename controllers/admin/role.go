@@ -191,8 +191,11 @@ func (this *RoleController) User() {
 	/*用户列表*/
 	var users []models.Members
 	qb, _ := orm.NewQueryBuilder("mysql")
-	qb.Select("id,username").
-		From("members").
+	qb.Select("a.id,a.username").
+		From("members as a").
+		LeftJoin("role_member as b").
+		On("a.id = b.user_id").
+		Where("b.role_id  != ''").
 		OrderBy("id").Desc()
 	sql := qb.String()
 	o.Raw(sql).QueryRows(&users)

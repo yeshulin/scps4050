@@ -67,7 +67,7 @@ func (this *UserController) Post() {
 		if roleuser.Role_id < 1 {
 			this.Data["json"] = map[string]interface{}{"code": "0", "message": "用户没有权限!"}
 		} else {
-			token := hjwt.GenToken(member.Id, member.Username, member.Realname, member.Email, member.Phone, roleuser.Role_id, roleuser.Rolename)
+			token := hjwt.GenToken(member.Id, member.Username, member.Realname, member.Email, member.Phone, member.Zone, roleuser.Role_id, roleuser.Rolename)
 			this.Ctx.SetCookie("Authorization", token, 86400, "/")
 			//		this.Ctx.Redirect(302, "/admin")
 			this.Data["json"] = map[string]interface{}{"code": "1", "message": "success", "data": member.Username}
