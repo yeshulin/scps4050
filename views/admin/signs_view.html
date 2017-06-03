@@ -9,6 +9,14 @@
     <link rel="stylesheet" href="/static/vipadmin/frame/layui/css/layui.css">
     <link rel="stylesheet" href="/static/vipadmin/css/style.css">
     <link rel="icon" href="/static/vipadmin/image/code.png">
+	<style>
+
+#container{
+	min-width:300px;
+	min-height:367px;
+}
+</style>
+	</style>
 </head>
 <body class="body">
 
@@ -46,11 +54,45 @@
     </tr>
 	<tr>
         <td>签到定位</td>
-        <td>{{.signs.Postion}}</td>
+        <td>
+<script charset="utf-8" src="http://map.qq.com/api/js?v=2.exp"></script>
+<script  type="text/javascript">
+var postion = {{.signs.Postion}};
+var postions= new Array(); //定义一数组 
+postions=postion.split(","); //字符分割 
+console.log(postions[0]);
+function init(){
+    var center=new qq.maps.LatLng(postions[1],postions[0]);
+    var map=new qq.maps.Map(document.getElementById("container"),{
+        center:center,
+        zoom:16
+    });
+    //添加定时器
+    setTimeout(function(){
+        var marker=new qq.maps.Marker({
+            position:center,
+			animation:qq.maps.MarkerAnimation.DROP,
+            map:map
+        });
+        //marker.setAnimation(qq.maps.Animation.DROP);
+    },1000);
+}
+window.onload=init;
+</script>
+<div id="container"></div>
+</td>
     </tr>
 	<tr>
         <td>签到照片</td>
-        <td><img src="{{.signs.Photos}}" width="200"></td>
+        <td><script  type="text/javascript">
+var photos = {{.signs.Photos}};
+var photoarr= new Array(); //定义一数组 
+photoarr=photos.split(","); //字符分割 
+for (i=0;i<photoarr.length ;i++ ) 
+{ 
+document.write("<a target='_blank' href='"+photoarr[i]+"'><img src='"+photoarr[i]+"' width='200' height='150'></a>&nbsp;&nbsp;&nbsp;&nbsp;"); //分割后的字符输出 
+}
+</script></td>
     </tr>
 	<tr>
         <td>是否审核</td>

@@ -118,7 +118,7 @@ func (this *SignsController) View() {
 	o := orm.NewOrm()
 	signs := new(SignsList)
 	qb, _ := orm.NewQueryBuilder("mysql")
-	qb.Select("a.id,a.years,a.months,a.addtime,a.updatetime,a.postion,a.isverify,b.realname,c.zonename").
+	qb.Select("a.id,a.years,a.months,a.addtime,a.updatetime,a.postion,a.photos,a.isverify,b.realname,c.zonename").
 		From("signs as a").
 		LeftJoin("members as b").
 		On("a.userid = b.id").

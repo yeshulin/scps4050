@@ -1,8 +1,9 @@
 package controllers
 
 import (
-	"fmt"
-	//	"strconv"
+	//	"fmt"
+	"path"
+	"strconv"
 	"time"
 
 	"github.com/astaxie/beego"
@@ -25,13 +26,16 @@ func (this *FileController) Upload() {
 		//	month := time.Now().Month().String()
 		//	day := strconv.Itoa(time.Now().Day())
 		// 获取当前年月
-		datePath := time.Now().Format("2006/01/01")
+		filename := strconv.FormatInt(time.Now().Unix(), 10)
+		//		fmt.Println(filename)
+		//		fmt.Println(path.Ext(h.Filename))
+		newfilename := filename + path.Ext(h.Filename)
 		// 设置保存目录
-		dirPath := beego.AppConfig.String("UploadPath") + datePath
-		fmt.Println(h.Filename)
+		dirPath := beego.AppConfig.String("UploadPath")
+		//		fmt.Println(h.Filename)
 
-		this.SaveToFile("file", fmt.Sprintf("%s/%s", dirPath, h.Filename))
-		json := map[string]interface{}{"code": "1", "message": "success!", "data": fmt.Sprintf("%s/%s", dirPath, h.Filename)}
+		this.SaveToFile("file", dirPath+newfilename)
+		json := map[string]interface{}{"code": "1", "message": "success!", "data": "/" + dirPath + newfilename}
 		this.Data["json"] = json
 	}
 	this.ServeJSON()
