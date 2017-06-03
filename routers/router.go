@@ -97,6 +97,7 @@ func init() {
 	beego.Router("/api/signs/list", &api.SignsController{}, "get:List")
 	beego.Router("/api/zones", &api.ZonesController{})
 	beego.Router("/api/applys/list", &api.ApplysController{}, "get:List")
+	beego.Router("/api/users", &api.UsersController{})
 	/*oss路由*/
 	beego.Router("/oss/webupload", &controllers.OssController{}, "get:WebUpload")
 }

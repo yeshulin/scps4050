@@ -199,7 +199,7 @@ func (this *UserController) Apply() {
 				applys1.Updatetime = time.Now().Unix()
 				if id, err := o.Insert(applys1); err == nil {
 					fmt.Println(id)
-					this.Data["json"] = map[string]interface{}{"code": "0", "message": "success!", "data": num}
+					this.Data["json"] = map[string]interface{}{"code": "1", "message": "success!", "data": num}
 				} else {
 					this.Data["json"] = map[string]interface{}{"code": "0", "message": "提交申请失败!"}
 				}
