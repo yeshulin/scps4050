@@ -7,6 +7,7 @@ import (
 type Signs struct {
 	Id         int    `orm:"pk"`
 	Years      string `年度`
+	Quarter    string `季度`
 	Months     string `月度`
 	Userid     int    `用户ID`
 	Postion    string `签到位置`

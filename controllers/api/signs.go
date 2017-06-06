@@ -27,6 +27,7 @@ func (this *SignsController) Post() {
 		//fmt.Println(password)
 		signs.Years = years
 		signs.Months = months
+		signs.Quarter = this.GetString("quarter")
 		signs.Userid = userid
 		signs.Postion = this.GetString("longitude") + "," + this.GetString("latitude")
 		signs.Photos = this.GetString("photos")
@@ -83,6 +84,7 @@ type SignsList struct {
 	Id         int    `orm:"pk"`
 	Years      int    `年度`
 	Months     string `月度`
+	Quarter    string `季度`
 	Userid     int    `用户ID`
 	Realname   string `真实姓名`
 	Zonename   string `区域名称`
@@ -115,7 +117,7 @@ func (this *SignsController) List() {
 	qb, _ := orm.NewQueryBuilder("mysql")
 
 	// 构建查询对象
-	qb.Select("a.id,a.years,a.userid,a.months,a.addtime,a.updatetime,a.photos,a.postion,a.isverify,b.realname,c.zonename").
+	qb.Select("a.id,a.years,a.userid,a.months,a.quarter,a.addtime,a.updatetime,a.photos,a.postion,a.isverify,b.realname,c.zonename").
 		From("signs as a").
 		LeftJoin("members as b").
 		On("a.userid = b.id").
