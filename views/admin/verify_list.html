@@ -38,7 +38,6 @@
         <th>电话</th>
 		<th>用户头像</th>
         <th>区域</th>
-		<th>是否审核</th>
 		<th>提交时间</th>
         <th>操作</th>
     </tr>
@@ -140,18 +139,6 @@
 						}	
 					},
 			        { data: 'Zonename' },
-			        { 
-						data: 'Isverify',
-						render:function(data, type, row, meta){
-							if(data==1){
-								return '通过';
-							}else if(data ==-1){
-								return '驳回';
-							}else{
-								return '待审';
-							}
-						}
-					},
 					{ data: 'Updatetime'},
 					{
 				       "data": "Isverify",

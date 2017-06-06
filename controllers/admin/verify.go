@@ -302,9 +302,10 @@ func (this *VerifyController) Importpost() {
 			realname, _ := row.Cells[1].String()
 			sex, _ := row.Cells[2].String()
 			bothtime, _ := row.Cells[3].String()
-			zone, _ := row.Cells[4].String()
-			zones := models.Zones{Zonename: zone}
-			err := o.Read(&zones, "id")
+			zonename, _ := row.Cells[4].String()
+			fmt.Println(zonename)
+			zones := models.Zones{Zonename: zonename}
+			err := o.Read(&zones, "zonename")
 			if err != nil {
 				beego.Error(err)
 			}
@@ -323,6 +324,7 @@ func (this *VerifyController) Importpost() {
 			member.Zone = zoneid
 			member.Phone = phone
 			member.Address = address
+			member.Isverify = 1
 			member.Addtime = time.Now().Unix()
 			member.Updatetime = time.Now().Unix()
 			id, _ := o.Insert(member)
