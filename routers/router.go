@@ -89,7 +89,6 @@ func init() {
 	beego.Router("/admin/signs/pass", &admin.SignsController{}, "Post:Pass")
 	beego.Router("/admin/signs/reject", &admin.SignsController{}, "Post:Reject")
 	beego.Router("/admin/signs/view", &admin.SignsController{}, "get:View")
-
 	beego.Router("/admin/index/welcome", &admin.IndexController{}, "get:Welcome")
 
 	/*接口路由*/
