@@ -82,6 +82,8 @@ func init() {
 	beego.Router("/admin/verify/applys", &admin.VerifyController{}, "get:Applys")
 	beego.Router("/admin/verify/passapplys", &admin.VerifyController{}, "Post:Passapplys")
 	beego.Router("/admin/verify/rejectapplys", &admin.VerifyController{}, "Post:Rejectapplys")
+	beego.Router("/admin/verify/import", &admin.VerifyController{}, "Get:Import")
+	beego.Router("/admin/verify/importpost", &admin.VerifyController{}, "Post:Importpost")
 	beego.Router("/admin/signs/find", &admin.SignsController{}, "get:Get")
 	beego.Router("/admin/signs", &admin.SignsController{}, "get:SignsList")
 	beego.Router("/admin/signs/pass", &admin.SignsController{}, "Post:Pass")

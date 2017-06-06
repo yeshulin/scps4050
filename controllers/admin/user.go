@@ -135,23 +135,24 @@ func (this *UserController) RegWeixin() {
 	req.SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true})
 	req.ToJSON(&result)
 	//	fmt.Println(result["session_key"])
-	aesencrypt := new(aesencrypt.AesEncrypt)
-	password, err := aesencrypt.Encrypt("123456")
-	if err != nil {
-		beego.Error(err)
-	}
+	//	aesencrypt := new(aesencrypt.AesEncrypt)
+	//	password, err := aesencrypt.Encrypt("123456")
+	//	if err != nil {
+	//		beego.Error(err)
+	//	}
 	o := orm.NewOrm()
 	meminfo := models.Members{Openid: result["openid"].(string)}
-	err = o.Read(&meminfo, "openid")
+	err := o.Read(&meminfo, "openid")
 	if err != nil {
-		member := new(models.Members)
-		//fmt.Println(password)
-		member.Openid = result["openid"].(string)
-		member.Password = base64.StdEncoding.EncodeToString(password)
-		member.Addtime = time.Now().Unix()
-		member.Updatetime = time.Now().Unix()
-		id, _ := o.Insert(member)
-		result["id"] = id
+		//		member := new(models.Members)
+		//		//fmt.Println(password)
+		//		member.Openid = result["openid"].(string)
+		//		member.Password = base64.StdEncoding.EncodeToString(password)
+		//		member.Addtime = time.Now().Unix()
+		//		member.Updatetime = time.Now().Unix()
+		//		id, _ := o.Insert(member)
+		//		result["id"] = id
+		result["id"] = 0
 		this.Data["json"] = map[string]interface{}{"code": "0", "message": "success!", "data": result}
 	} else {
 		result["id"] = meminfo.Id
@@ -162,19 +163,19 @@ func (this *UserController) RegWeixin() {
 
 func (this *UserController) Apply() {
 	o := orm.NewOrm()
-	id, _ := strconv.Atoi(this.GetString("id"))
 
 	zone, _ := strconv.Atoi(this.GetString("zone"))
 	years := this.GetString("years")
-	member := models.Members{Id: id}
 
-	err := o.Read(&member)
+	member1 := models.Members{Username: this.GetString("username"), Openid: ""}
+	err := o.Read(&member1, "username")
 
 	if err == orm.ErrNoRows {
-		this.Data["json"] = map[string]interface{}{"code": "0", "message": "找不到用户!"}
-	} else if err == orm.ErrMissPK {
-		this.Data["json"] = map[string]interface{}{"code": "0", "message": "找不到用户!"}
-	} else {
+		member := new(models.Members)
+		aesencrypt := new(aesencrypt.AesEncrypt)
+		password, _ := aesencrypt.Encrypt("123456")
+		member.Openid = this.GetString("openid")
+		member.Password = base64.StdEncoding.EncodeToString(password)
 		member.Username = this.GetString("username")
 		member.Realname = this.GetString("realname")
 		member.Avatarurl = this.GetString("avatarurl")
@@ -186,12 +187,14 @@ func (this *UserController) Apply() {
 		member.Phone = this.GetString("phone")
 		member.Workaddress = this.GetString("workaddress")
 		member.Worktype = this.GetString("worktype")
-		if num, err := o.Update(&member); err == nil {
-			applys := models.Applys{Userid: id, Years: years}
+		member.Addtime = time.Now().Unix()
+		member.Updatetime = time.Now().Unix()
+		if id, err := o.Insert(member); err == nil {
+			applys := models.Applys{Userid: int(id), Years: years}
 			err = o.Read(&applys, "userid", "years")
 			if err != nil {
 				applys1 := new(models.Applys)
-				applys1.Userid = id
+				applys1.Userid = int(id)
 				applys1.Years = this.GetString("years")
 				applys1.Workaddress = this.GetString("workaddress")
 				applys1.Worktype = this.GetString("worktype")
@@ -199,7 +202,7 @@ func (this *UserController) Apply() {
 				applys1.Updatetime = time.Now().Unix()
 				if id, err := o.Insert(applys1); err == nil {
 					fmt.Println(id)
-					this.Data["json"] = map[string]interface{}{"code": "1", "message": "success!", "data": num}
+					this.Data["json"] = map[string]interface{}{"code": "1", "message": "success!", "data": id}
 				} else {
 					this.Data["json"] = map[string]interface{}{"code": "0", "message": "提交申请失败!"}
 				}
@@ -209,6 +212,17 @@ func (this *UserController) Apply() {
 
 		} else {
 			this.Data["json"] = map[string]interface{}{"code": "0", "message": "提交申请失败!"}
+		}
+	} else {
+		member := models.Members{Id: member1.Id}
+		if o.Read(&member) == nil {
+			member.Openid = this.GetString("openid")
+			member.Avatarurl = this.GetString("avatarurl")
+			if num, err := o.Update(&member); err == nil {
+				this.Data["json"] = map[string]interface{}{"code": "1", "message": "success!", "data": num}
+			} else {
+				this.Data["json"] = map[string]interface{}{"code": "0", "message": "提交申请失败!"}
+			}
 		}
 	}
 	this.ServeJSON()

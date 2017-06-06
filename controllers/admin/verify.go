@@ -3,13 +3,14 @@ package admin
 import (
 	"fmt"
 	"strconv"
+	"time"
+	"webproject/4050/common/hjwt"
 	"webproject/4050/controllers"
 	"webproject/4050/models"
 
-	"webproject/4050/common/hjwt"
-
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
+	"github.com/tealeg/xlsx"
 )
 
 type VerifyController struct {
@@ -279,5 +280,70 @@ func (this *VerifyController) Rejectapplys() {
 			this.Data["json"] = map[string]interface{}{"code": "0", "message": "fail!"}
 		}
 	}
+	this.ServeJSON()
+}
+
+func (this *VerifyController) Import() {
+	this.TplName = "admin/verify_import.html"
+}
+
+func (this *VerifyController) Importpost() {
+	o := orm.NewOrm()
+	excelFileName := this.GetString("xlsx")
+	fmt.Println(excelFileName)
+	xlFile, error := xlsx.OpenFile(excelFileName)
+	if error != nil {
+		beego.Error(error)
+	}
+	for _, sheet := range xlFile.Sheets {
+		for _, row := range sheet.Rows {
+			//			fmt.Println(row.Cells[0].String)
+			//			val, _ := row.Cells[0].String()
+			realname, _ := row.Cells[1].String()
+			sex, _ := row.Cells[2].String()
+			bothtime, _ := row.Cells[3].String()
+			zone, _ := row.Cells[4].String()
+			zones := models.Zones{Zonename: zone}
+			err := o.Read(&zones, "id")
+			if err != nil {
+				beego.Error(err)
+			}
+			zoneid := zones.Id
+			address, _ := row.Cells[5].String()
+			username, _ := row.Cells[6].String()
+			phone, _ := row.Cells[7].String()
+			workaddress, _ := row.Cells[8].String()
+			worktype, _ := row.Cells[9].String()
+			member := new(models.Members)
+			member.Username = username
+			member.Password = "RE7+OOlq"
+			member.Realname = realname
+			member.Sex = sex
+			member.Bothtime = bothtime
+			member.Zone = zoneid
+			member.Phone = phone
+			member.Address = address
+			member.Addtime = time.Now().Unix()
+			member.Updatetime = time.Now().Unix()
+			id, _ := o.Insert(member)
+			fmt.Println(id)
+			applys := new(models.Applys)
+			applys.Userid = int(id)
+			applys.Years = "2017"
+			applys.Worktype = worktype
+			applys.Workaddress = workaddress
+			applys.Isverify = 1
+			applys.Addtime = time.Now().Unix()
+			applys.Updatetime = time.Now().Unix()
+			id1, _ := o.Insert(applys)
+			fmt.Println(id1)
+			//			fmt.Println(val)
+			//			for _, cell := range row.Cells {
+			//				val, _ := cell.String()
+			//				fmt.Printf("%s\n", val)
+			//			}
+		}
+	}
+	this.Data["json"] = map[string]interface{}{"code": "1", "message": "success!"}
 	this.ServeJSON()
 }
