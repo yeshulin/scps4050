@@ -68,6 +68,7 @@
         <label class="layui-form-label">所属区域</label>
         <div class="layui-input-inline">
             <select name="zone" lay-filter="zone">
+				<option value="">无</option>
 				{{range $key,$value:=.zones}}
                 <option value="{{$value.Id}}">{{$value.Zonename}}</option>
 				{{end}}

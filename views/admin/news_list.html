@@ -51,6 +51,7 @@
 <script type="text/javascript" charset="utf8" src="/static/vipadmin/js/jquery.js"></script>
 <script type="text/javascript" src="/static/vipadmin/js/jquery.dataTables.min.js"></script>
 <script type="text/javascript" src="/static/vipadmin/js/table-tool.js"></script>
+<script type="text/javascript" src="/static/vipadmin/js/extend.js"></script>
 <script type="text/javascript">
     layui.use(['element','layer'], function(){
         var $ = layui.jquery,element = layui.element,layer = layui.layer;
@@ -137,8 +138,18 @@
 					{ data: 'Catname' },
 					{ data: 'Title' },
 			        { data: 'Username' },
-			        { data: 'Addtime' },
-			        { data: 'Updatetime' }
+			        { 
+						data: 'Addtime',
+						render:function(data,type,row,meta){
+							return data = formatTime(data);
+						}
+					},
+			        { 
+						data: 'Updatetime',
+						render:function(data,type,row,meta){
+							return data = formatTime(data);
+						}
+					}
                   ],
                   "language": {
                       "processing": "加载中...",

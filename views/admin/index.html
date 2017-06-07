@@ -16,10 +16,8 @@
 <div class="layui-layout layui-layout-admin"> <!-- 添加skin-1类可手动修改主题为纯白，添加skin-2类可手动修改主题为蓝白 -->
     <!-- header -->
     <div class="layui-header my-header">
-        <a href="index.html">
-            <!--<img class="my-header-logo" src="" alt="logo">-->
-            <div class="my-header-logo">{{.Website}}</div>
-        </a>
+       <!--<img class="my-header-logo" src="" alt="logo">-->
+            <a href="/admin/"><div class="my-header-logo">{{.Website}}</div></a>
         <div class="my-header-btn">
             <button class="layui-btn layui-btn-small btn-nav"><i class="layui-icon">&#xe620;</i></button>
         </div>
@@ -83,23 +81,19 @@
             </ul>
             <div class="layui-tab-content">
                 <div class="layui-tab-item layui-show">
-                    <iframe id="iframe" src="admin/index/welcome" frameborder="0"></iframe>
+                    <iframe id="iframe" src="/admin/index/welcome" frameborder="0"></iframe>
                 </div>
             </div>
         </div>
     </div>
     <!-- footer -->
     <div class="layui-footer my-footer">
-        <p><a href="http://vip-admin.com" target="_blank">vip-admin后台模板v1.6.0</a>&nbsp;&nbsp;&&nbsp;&nbsp;<a href="http://vip-admin.com/index/gather/index.html" target="_blank">vip-admin管理系统v1.1.0</a></p>
-        <p>2017 © copyright 蜀ICP备17005881号</p>
+        <p><a href="https://scps.19apps.com" target="_blank">彭山区4050系统</a></p>
+        <p>2017 © copyright 蜀ICP备13004961号-4</p>
     </div>
 </div>
 
-<!-- pay -->
-<div class="my-pay-box none">
-    <div><img src="/static/vipadmin/image/zfb.png" alt="支付宝"><p>支付宝</p></div>
-    <div><img src="/static/vipadmin/image/wx.png" alt="微信"><p>微信</p></div>
-</div>
+
 
 <script type="text/javascript" src="/static/vipadmin/frame/layui/layui.js"></script>
 <script type="text/javascript" src="/static/vipadmin/js/index.js"></script>
