@@ -72,7 +72,7 @@ func (this *VerifyController) Get() {
 	qb, _ := orm.NewQueryBuilder("mysql")
 
 	// 构建查询对象
-	qb.Select("a.id,a.username,a.realname,a.phone,a.avatarurl,a.worktype,a.updatetime,b.zonename,a.isverify").
+	qb.Select("a.id,a.username,a.realname,a.phone,a.avatarurl,a.worktype,a.updatetime,a.remark,b.zonename,a.isverify").
 		From("members as a").
 		LeftJoin("zones as b").
 		On("a.zone = b.id").
@@ -89,7 +89,7 @@ func (this *VerifyController) Get() {
 	/*查询总量*/
 	qbs, _ := orm.NewQueryBuilder("mysql")
 	var counts []VerifyUser
-	qbs.Select("a.id,a.username,a.realname,a.phone,a.avatarurl,a.worktype,a.updatetime,b.zonename,a.isverify").
+	qbs.Select("a.id,a.username,a.realname,a.phone,a.avatarurl,a.worktype,a.updatetime,a.remark,b.zonename,a.isverify").
 		From("members as a").
 		LeftJoin("zones as b").
 		On("a.zone = b.id").
@@ -171,6 +171,33 @@ func (this *VerifyController) Reject() {
 	}
 	this.ServeJSON()
 }
+
+func (this *VerifyController) Setremark() {
+	o := orm.NewOrm()
+	member := new(models.Members)
+
+	//fmt.Println(password)
+	id, err := strconv.Atoi(this.GetString("id"))
+	fmt.Println(id)
+
+	if err == nil {
+		member.Id = id
+		//		fmt.Println(id)
+		//fmt.Println(o.Read(&member))
+		if o.Read(member) == nil {
+			member.Remark = this.GetString("remark")
+			id, err := o.Update(member)
+			if err != nil {
+				beego.Error(err)
+			}
+			this.Data["json"] = map[string]interface{}{"code": "1", "message": "success!", "data": id}
+
+		} else {
+			this.Data["json"] = map[string]interface{}{"code": "0", "message": "fail!"}
+		}
+	}
+	this.ServeJSON()
+}
 func (this *VerifyController) View() {
 	id, _ := strconv.Atoi(this.GetString("id"))
 	member := new(VerifyUser)
@@ -178,7 +205,7 @@ func (this *VerifyController) View() {
 	qb, _ := orm.NewQueryBuilder("mysql")
 
 	// 构建查询对象
-	qb.Select("a.id,a.username,a.realname,a.sex,a.address,a.bothtime,a.phone,a.worktype,a.workaddress,a.addtime,a.updatetime,b.zonename,isverify").
+	qb.Select("a.id,a.username,a.realname,a.sex,a.address,a.bothtime,a.phone,a.worktype,a.workaddress,a.addtime,a.updatetime,a.remark,b.zonename,isverify").
 		From("members as a").
 		LeftJoin("zones as b").
 		On("a.zone = b.id").

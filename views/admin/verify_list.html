@@ -38,6 +38,7 @@
         <th>电话</th>
 		<th>用户头像</th>
         <th>区域</th>
+		<th>备注</th>
 		<th>提交时间</th>
         <th>操作</th>
     </tr>
@@ -140,6 +141,7 @@
 						}	
 					},
 			        { data: 'Zonename' },
+					{ data: 'Remark' },
 					{ 
 						data: 'Updatetime',
 						render:function(data,type,row,meta){
@@ -152,7 +154,7 @@
 				       "defaultContent": "",
 				       "render": function (data, type, row, meta) {
 						   if(data==0){
-								return data = '<button class="layui-btn layui-btn-small view">查看</button><!--button class="layui-btn layui-btn-small layui-btn-normal pass">通过</button><button class="layui-btn layui-btn-small layui-btn-warm reject">驳回</button-->';
+								return data = '<button class="layui-btn layui-btn-small view">查看</button><!--button class="layui-btn layui-btn-small layui-btn-normal pass">通过</button--><button class="layui-btn layui-btn-small layui-btn-warm setremark">备注</button>';
 							}else{
 								return data = '<button class="layui-btn layui-btn-small view">查看</button>';
 							}
@@ -274,6 +276,20 @@
 							window.location = "/admin/verify";
 						}else{
 							layer.msg('拒绝审核失败！');
+						}
+					},"json")
+			  });
+        } );
+		$('#dateTable tbody').on( 'click','.setremark',function () {
+            var data = dataTable.row( $(this).parents('tr') ).data();
+			layer.prompt({title: '备注内容', formType: 2}, function(text, index){
+			    layer.close(index);
+				//console.log(text)
+				$.post("/admin/verify/setremark",{id:data.Id,remark:text},function(data){
+						if(data.code==1){
+							window.location = "/admin/verify";
+						}else{
+							layer.msg('备注失败！');
 						}
 					},"json")
 			  });
