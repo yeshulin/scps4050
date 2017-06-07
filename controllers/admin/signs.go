@@ -24,6 +24,7 @@ func (this *SignsController) SignsList() {
 type SignsList struct {
 	Id         int    `orm:"pk"`
 	Years      int    `年度`
+	Quarter    string `季度`
 	Months     string `月度`
 	Userid     int    `用户ID`
 	Realname   string `真实姓名`
@@ -67,7 +68,7 @@ func (this *SignsController) Get() {
 	qb, _ := orm.NewQueryBuilder("mysql")
 
 	// 构建查询对象
-	qb.Select("a.id,a.years,a.months,a.addtime,a.updatetime,a.postion,a.isverify,b.realname,c.zonename").
+	qb.Select("a.id,a.years,a.quarter,a.months,a.addtime,a.updatetime,a.postion,a.isverify,b.realname,c.zonename").
 		From("signs as a").
 		LeftJoin("members as b").
 		On("a.userid = b.id").
@@ -85,7 +86,7 @@ func (this *SignsController) Get() {
 	/*查询总量*/
 	qbs, _ := orm.NewQueryBuilder("mysql")
 	var counts []SignsList
-	qbs.Select("a.id,a.years,a.months,a.addtime,a.updatetime,a.postion,a.isverify,b.realname,c.zonename").
+	qbs.Select("a.id,a.years,a.quarter,a.months,a.addtime,a.updatetime,a.postion,a.isverify,b.realname,c.zonename").
 		From("signs as a").
 		LeftJoin("members as b").
 		On("a.userid = b.id").
@@ -118,7 +119,7 @@ func (this *SignsController) View() {
 	o := orm.NewOrm()
 	signs := new(SignsList)
 	qb, _ := orm.NewQueryBuilder("mysql")
-	qb.Select("a.id,a.years,a.months,a.addtime,a.updatetime,a.postion,a.photos,a.isverify,b.realname,c.zonename").
+	qb.Select("a.id,a.years,a.quarter,a.months,a.addtime,a.updatetime,a.postion,a.photos,a.isverify,b.realname,c.zonename").
 		From("signs as a").
 		LeftJoin("members as b").
 		On("a.userid = b.id").

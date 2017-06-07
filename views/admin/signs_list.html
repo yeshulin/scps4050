@@ -12,11 +12,11 @@
     <link rel="icon" href="/static/vipadmin/image/code.png">
 </head>
 <body class="body">
-
+<a class="refresh c-24" href="javascript:refresh_iframe();"><i class="Hui-iconfont Hui-iconfont-huanyipi f-16"></i>刷新</a>
 <fieldset class="layui-elem-field layui-field-title">
     <legend>
         <span class="layui-breadcrumb">
-            <a href="/admin">首页</a>
+            <a href="/admin" target="_top">首页</a>
             <a><cite>签到列表</cite></a>
         </span>
     </legend>
@@ -28,6 +28,7 @@
     <tr>
         <th><input type="checkbox" class="my-checkbox" /></th>
 		<th>年度</th>
+		<th>季度</th>
 		<th>月度</th>
         <th>姓名</th>
 		<th>签到位置</th>
@@ -124,7 +125,27 @@
                   columns: [
 	                { data: 'Id' },
 					{ data: 'Years' },
-					{ data: 'Months' },
+					{ 
+						data: 'Quarter',
+						render:function(data, type, row, meta){
+							if(data!=""){
+								return data = 'Q'+data+'季度';
+							}else{
+								return "";
+							}
+							
+						}
+					},
+					{ 
+						data: 'Months',
+						render:function(data, type, row, meta){
+							if(data!=""){
+								return data = data+'月份';
+							}else{
+								return "";
+							}
+						} 
+					},
 					{ data: 'Realname' },
 			        { data: 'Postion' },
 			        { 

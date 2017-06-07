@@ -21,11 +21,12 @@
 <body class="body">
 
 
+<a class="refresh c-24" href="javascript:refresh_iframe();"><i class="Hui-iconfont Hui-iconfont-huanyipi f-16"></i>刷新</a>
 <fieldset class="layui-elem-field layui-field-title" style="margin-top:20px;">
     <legend>
         <span class="layui-breadcrumb">
-            <a href="/admin">首页</a>
-            <a><cite>浏览签到</cite></a>
+            <a href="/admin" target="_top">首页</a><a href="/admin/signs">签到列表</a>
+            <a><cite>查看签到</cite></a>
         </span>
     </legend>
 </fieldset>
@@ -45,8 +46,12 @@
     </thead>
     <tbody>
 	<tr>
+        <td>季度</td>
+        <td>Q{{.signs.Quarter}}季度</td>
+    </tr>
+	<tr>
         <td>月度</td>
-        <td>{{.signs.Months}}</td>
+        <td>{{.signs.Months}}月份</td>
     </tr>
 	<tr>
         <td>姓名</td>
@@ -115,6 +120,7 @@ document.write("<a target='_blank' href='"+photoarr[i]+"'><img src='"+photoarr[i
     </tbody>
 </table>
 <script src="/static/vipadmin/frame/layui/layui.js" charset="utf-8"></script>
+<script src="/static/vipadmin/js/extend.js" charset="utf-8"></script>
 <script type="text/javascript">
 layui.use(['element','form'], function(){})
 </script>
