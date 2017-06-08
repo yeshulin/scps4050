@@ -14,5 +14,6 @@ func main() {
 
 	beego.AddFuncMap("ConvertT", function.ConvertT)
 	beego.SetStaticPath("/uploads", "uploads")
+	beego.SetStaticPath("/", "")
 	beego.Run()
 }
