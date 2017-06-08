@@ -14,7 +14,7 @@ func ConvertT(in int64) (out string) {
 	return out
 }
 func TransparentStatic(ctx *context.Context) {
-	if strings.Index(ctx.Request.URL.Path, "v1/") >= 0 {
+	if strings.Index(ctx.Request.URL.Path, "api/") >= 0 {
 		return
 	}
 	http.ServeFile(ctx.ResponseWriter, ctx.Request, "path/"+ctx.Request.URL.Path)
