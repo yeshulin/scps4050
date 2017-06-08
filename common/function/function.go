@@ -1,11 +1,11 @@
 package function
 
 import (
-	"net/http"
-	"strings"
+	//	"net/http"
+	//	"strings"
 	"time"
 
-	"github.com/astaxie/beego/context"
+	//	"github.com/astaxie/beego/context"
 )
 
 func ConvertT(in int64) (out string) {
@@ -13,9 +13,10 @@ func ConvertT(in int64) (out string) {
 	out = tm.Format("2006-01-02 15:04:05")
 	return out
 }
-func TransparentStatic(ctx *context.Context) {
-	if strings.Index(ctx.Request.URL.Path, "api/") >= 0 {
-		return
-	}
-	http.ServeFile(ctx.ResponseWriter, ctx.Request, "path/"+ctx.Request.URL.Path)
-}
+
+//func TransparentStatic(ctx *context.Context) {
+//	if strings.Index(ctx.Request.URL.Path, "api/") >= 0 {
+//		return
+//	}
+//	http.ServeFile(ctx.ResponseWriter, ctx.Request, "path/"+ctx.Request.URL.Path)
+//}
