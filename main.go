@@ -11,9 +11,10 @@ import (
 )
 
 func main() {
-
 	beego.AddFuncMap("ConvertT", function.ConvertT)
 	beego.SetStaticPath("/uploads", "uploads")
-	beego.SetStaticPath("/", "ceshi")
+	beego.InsertFilter("/", beego.BeforeRouter, function.TransparentStatic)
+	beego.InsertFilter("/*", beego.BeforeRouter, function.TransparentStatic)
+
 	beego.Run()
 }
