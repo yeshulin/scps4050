@@ -117,6 +117,63 @@ func (this *UserController) Reg() {
 	this.ServeJSON()
 }
 
+func (this *UserController) LoginWeixin() {
+	aesencrypt := new(aesencrypt.AesEncrypt)
+	username := this.GetString("username")
+	o := orm.NewOrm()
+	member := models.Members{Username: username}
+	err := o.Read(&member, "username")
+	if err != nil {
+		this.Data["json"] = map[string]interface{}{"code": "0", "message": "用户不存在!"}
+	}
+	pass, _ := aesencrypt.Encrypt(this.GetString("password"))
+
+	fmt.Println(base64.StdEncoding.EncodeToString(pass))
+	fmt.Println(member.Password)
+	if base64.StdEncoding.EncodeToString(pass) != member.Password {
+		this.Data["json"] = map[string]interface{}{"code": "0", "message": "用户名密码错误!"}
+
+	} else {
+		var roleuser RoleUser
+		qb, _ := orm.NewQueryBuilder("mysql")
+		qb.Select("a.id,a.role_id,b.name as role_name,a.user_id,b.name as rolename,c.username,c.realname").
+			From("role_member as a").
+			LeftJoin("role as b").On("a.role_id = b.id").
+			LeftJoin("members as c").On("a.user_id = c.id").
+			Where("c.id = ?").
+			OrderBy("a.id").Desc()
+
+		// 导出 SQL 语句
+		sql := qb.String()
+
+		// 执行 SQL 语句
+
+		o.Raw(sql, member.Id).QueryRow(&roleuser)
+		fmt.Println(roleuser)
+		if roleuser.Role_id < 1 {
+			this.Data["json"] = map[string]interface{}{"code": "0", "message": "用户没有权限!"}
+		} else {
+
+			//this.Ctx.Redirect(302, "/admin")
+			member1 := models.Members{Id: member.Id}
+			if o.Read(&member1) == nil {
+				member1.Openid = this.GetString("openid")
+				member1.Avatarurl = this.GetString("avatarurl")
+				if num, err := o.Update(&member1); err == nil {
+					fmt.Println(num)
+					this.Data["json"] = map[string]interface{}{"code": "1", "message": "success", "data": roleuser.Role_id}
+				} else {
+					this.Data["json"] = map[string]interface{}{"code": "0", "message": "用户登录失败!"}
+				}
+			}
+		}
+
+	}
+
+	this.ServeJSON()
+
+}
+
 type WeixinResult struct {
 	session_key string `会话密钥`
 	openid      string `用户唯一标识`

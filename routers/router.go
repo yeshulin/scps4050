@@ -15,6 +15,7 @@ func init() {
 	beego.Router("/user/login", &admin.UserController{}, "post:Post")
 	beego.Router("/user/reg", &admin.UserController{}, "post:Reg")
 	beego.Router("/user/regweixin", &admin.UserController{}, "post:RegWeixin")
+	beego.Router("/user/loginweixin", &admin.UserController{}, "post:LoginWeixin")
 	beego.Router("/user/apply", &admin.UserController{}, "post:Apply")
 	beego.Router("/user/verify", &admin.UserController{}, "post:Verify")
 	beego.Router("/user/getapply", &admin.UserController{}, "get:GetApply")
@@ -100,6 +101,7 @@ func init() {
 	beego.Router("/api/zones", &api.ZonesController{})
 	beego.Router("/api/applys/list", &api.ApplysController{}, "get:List")
 	beego.Router("/api/users", &api.UsersController{})
+	beego.Router("/api/users/userlist", &api.UsersController{}, "get:UserList")
 	/*oss路由*/
 	beego.Router("/oss/webupload", &controllers.OssController{}, "get:WebUpload")
 }
