@@ -37,6 +37,15 @@ type VerifyUser struct {
 	Phone       string `电话`
 	Isverify    int    `是否审核用户`
 	Remark      string `备注`
+	Adminid     string `核查员`
+	Adminname   string `核查员姓名`
+	Isyears     string `年度审核`
+	Quarter1    string `一季度`
+	Quarter2    string `二季度`
+	Quarter3    string `三季度`
+	Quarter4    string `四季度`
+	Postion     string `签到位置`
+	Photos      string `签到照片`
 	Addtime     int64  `添加时间`
 	Updatetime  int64  `更新时间`
 }
@@ -225,11 +234,33 @@ func (this *VerifyController) Tongji() {
 	this.TplName = "admin/verify_tongji.html"
 }
 
+type ApplysList struct {
+	Id          int    `orm:"pk"`
+	Userid      int    `用户ID`
+	Realname    string `用户姓名`
+	Years       string `年度`
+	Workaddress string `就业地址`
+	Worktype    string `就业形式`
+	Isverify    int    `是否审核用户`
+	Remark      string `备注`
+	Adminid     int    `核查员`
+	Adminname   string `核查员姓名`
+	Isyears     int    `年度审核`
+	Quarter1    int    `一季度`
+	Quarter2    int    `二季度`
+	Quarter3    int    `三季度`
+	Quarter4    int    `四季度`
+	Postion     string `签到位置`
+	Photos      string `签到照片`
+	Addtime     int64  `添加时间`
+	Updatetime  int64  `更新时间`
+}
+
 func (this *VerifyController) Applys() {
 	userid := this.GetString("userid")
 	where := "1=1"
 	o := orm.NewOrm()
-	var maps []models.Applys
+	var maps []ApplysList
 	//fmt.Println(id)
 
 	if userid != "" {
@@ -239,8 +270,10 @@ func (this *VerifyController) Applys() {
 	qb, _ := orm.NewQueryBuilder("mysql")
 
 	// 构建查询对象
-	qb.Select("a.id,a.userid,a.years,a.addtime,a.updatetime,a.worktype,a.workaddress,a.isverify").
+	qb.Select("a.id,a.userid,a.years,a.addtime,a.updatetime,a.worktype,a.workaddress,a.isverify,a.isyears,a.quarter1,a.quarter2,a.quarter3,a.quarter4,a.postion,a.photos,a.adminid,b.realname as adminname").
 		From("applys as a").
+		LeftJoin("members as b").
+		On("a.adminid = b.id").
 		Where(where).
 		OrderBy("a.id").Desc()
 
@@ -375,4 +408,26 @@ func (this *VerifyController) Importpost() {
 	}
 	this.Data["json"] = map[string]interface{}{"code": "1", "message": "success!"}
 	this.ServeJSON()
+}
+func (this *VerifyController) Applyview() {
+	id, _ := strconv.Atoi(this.GetString("id"))
+	uid, _ := strconv.Atoi(this.GetString("uid"))
+	o := orm.NewOrm()
+	applys := new(ApplysList)
+	qb, _ := orm.NewQueryBuilder("mysql")
+	qb.Select("a.id,a.userid,a.years,a.addtime,a.updatetime,a.worktype,a.workaddress,a.isverify,a.isyears,a.quarter1,a.quarter2,a.quarter3,a.quarter4,a.postion,a.photos,a.adminid,b.realname as adminname,c.realname").
+		From("applys as a").
+		LeftJoin("members as b").
+		On("a.adminid = b.id").
+		LeftJoin("members as c").
+		On("a.userid = c.id").
+		Where("a.id = ?")
+	sql := qb.String()
+	err := o.Raw(sql, id).QueryRow(&applys)
+	if err != nil {
+		beego.Error(err)
+	}
+	this.Data["applys"] = applys
+	this.Data["uid"] = uid
+	this.TplName = "admin/verify_applyview.html"
 }

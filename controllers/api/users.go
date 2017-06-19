@@ -74,7 +74,7 @@ func (this *UsersController) UserList() {
 	qb, _ := orm.NewQueryBuilder("mysql")
 
 	// 构建查询对象
-	qb.Select("a.id,a.username,a.realname,a.email,a.phone").
+	qb.Select("a.id,a.username,a.realname,a.phone,a.bothtime,a.address").
 		From("members as a").
 		LeftJoin("role_member as b").
 		On("a.id=b.user_id").

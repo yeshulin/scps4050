@@ -96,8 +96,13 @@
         <th>年度</th>
         <th>灵活就业形式</th>
 		<th>灵活就业地址</th>
-        <th>是否审核</th>
+        <th>资料审核</th>
 		<th>备注</th>
+		<th>年度审核</th>
+		<th>核查员</th>
+		<th>二季度</th>
+		<th>三季度</th>
+		<th>四季度</th>
         <th>操作</th>
     </tr>
     </thead>
@@ -210,15 +215,56 @@
 						}
 					},
 					{data:'Remark'},
+					{ 
+						data: 'Isyears',
+						render:function(data, type, row, meta){
+							if(data==1){
+								return '通过';
+							}else{
+								return '待审';
+							}
+						}
+					},
+					{data:'Adminname'},
+					{ 
+						data: 'Quarter2',
+						render:function(data, type, row, meta){
+							if(data > 0){
+								return '通过';
+							}else{
+								return '待审';
+							}
+						}
+					},
+					{ 
+						data: 'Quarter3',
+						render:function(data, type, row, meta){
+							if(data > 0){
+								return '通过';
+							}else{
+								return '待审';
+							}
+						}
+					},
+					{ 
+						data: 'Quarter4',
+						render:function(data, type, row, meta){
+							if(data > 0){
+								return '通过';
+							}else{
+								return '待审';
+							}
+						}
+					},
 					{
 				       data: "Isverify",
 				       "orderable": false, // 禁用排序
 				       "defaultContent": "",
 				       "render": function (data, type, row, meta) {
 						   if(data==0){
-								return data = '<button class="layui-btn layui-btn-small layui-btn-normal pass">通过</button><button class="layui-btn layui-btn-small layui-btn-warm reject">驳回</button>';
+								return data = '<button class="layui-btn layui-btn-small layui-btn-normal pass">资料通过</button><button class="layui-btn layui-btn-small layui-btn-warm reject">资料驳回</button>';
 							}else{
-								return data = '';
+								return data = '<button class="layui-btn layui-btn-small view">查看</button>';
 							}
 				           
 				        }
@@ -270,7 +316,10 @@
                 layer.msg(list);
             }
         });
-		
+		$('#dateTable tbody').on( 'click','.view',function () {
+            var data = dataTable.row( $(this).parents('tr') ).data();
+			window.location="/admin/verify/applyview?id="+data.Id+"&uid="+{{.member.Id}};
+		});	
          $('#dateTable tbody').on( 'click','.pass',function () {
 
             var data = dataTable.row( $(this).parents('tr') ).data();
