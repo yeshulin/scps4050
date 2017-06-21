@@ -2,11 +2,14 @@ package admin
 
 import (
 	"fmt"
+	"net/http"
 	"strconv"
 	"time"
 	"webproject/4050/common/hjwt"
 	"webproject/4050/controllers"
 	"webproject/4050/models"
+
+	"webproject/4050/common/function"
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
@@ -430,4 +433,216 @@ func (this *VerifyController) Applyview() {
 	this.Data["applys"] = applys
 	this.Data["uid"] = uid
 	this.TplName = "admin/verify_applyview.html"
+}
+
+type TongjiList struct {
+	Id          int    `orm:"pk"`
+	Userid      int    `用户ID`
+	Username    string `用户名`
+	Realname    string `真实姓名`
+	Phone       string `电话`
+	Years       string `年度`
+	Workaddress string `就业地址`
+	Worktype    string `就业形式`
+	Isverify    int    `是否审核用户`
+	Remark      string `备注`
+	Adminid     int    `核查员`
+	Adminname   string `核查员姓名`
+	Isyears     int    `年度审核`
+	Quarter1    int    `一季度`
+	Quarter2    int    `二季度`
+	Quarter3    int    `三季度`
+	Quarter4    int    `四季度`
+	Postion     string `签到位置`
+	Photos      string `签到照片`
+	Addtime     int64  `添加时间`
+	Updatetime  int64  `更新时间`
+}
+
+func (this *VerifyController) TongjiList() {
+	cookie := this.Ctx.GetCookie("Authorization")
+	Claims, _ := hjwt.CheckToken(cookie)
+	limit := "10"
+	start := this.GetString("start")
+	page := this.GetString("page")
+	sort := this.GetString("sortColumn")
+	search := this.GetString("search")
+	ilimit, _ := strconv.Atoi(limit)
+	istart, _ := strconv.Atoi(start)
+	where := "d.role_id is null"
+	o := orm.NewOrm()
+	var maps []TongjiList
+	//	fmt.Println(id)
+	zone_id := Claims["zone"].(float64)
+	zone := strconv.FormatFloat(zone_id, 'f', 0, 64)
+	role_id := Claims["role_id"].(float64)
+	fmt.Println(zone_id)
+	if role_id == 2 {
+		where = where + " and b.id = " + zone
+	}
+	if search != "" {
+		where = where + " and (c.username like '%" + search + "%' or c.realname like '%" + search + "%' or c.phone like '%" + search + "%' or b.realname like '%" + search + "%')"
+	}
+	qb, _ := orm.NewQueryBuilder("mysql")
+
+	// 构建查询对象
+	qb.Select("a.id,a.userid,a.years,a.addtime,a.updatetime,a.worktype,a.workaddress,a.isverify,a.isyears,a.quarter1,a.quarter2,a.quarter3,a.quarter4,a.postion,a.photos,a.adminid,b.realname as adminname,c.username,c.realname,c.phone").
+		From("applys as a").
+		LeftJoin("members as b").
+		On("a.adminid = b.id").
+		LeftJoin("members as c").
+		On("a.userid = c.id").
+		LeftJoin("role_member as d").
+		On("a.id = d.user_id").
+		Where(where).
+		OrderBy(sort).Desc().
+		Limit(ilimit).Offset(istart)
+
+	// 导出 SQL 语句
+	sql := qb.String()
+	num, _ := o.Raw(sql).QueryRows(&maps)
+	fmt.Println(num)
+	/*查询总量*/
+	qbs, _ := orm.NewQueryBuilder("mysql")
+	var counts []TongjiList
+	qbs.Select("a.id,a.userid,a.years,a.addtime,a.updatetime,a.worktype,a.workaddress,a.isverify,a.isyears,a.quarter1,a.quarter2,a.quarter3,a.quarter4,a.postion,a.photos,a.adminid,b.realname as adminname,c.username,c.realname,c.phone").
+		From("applys as a").
+		LeftJoin("members as b").
+		On("a.adminid = b.id").
+		LeftJoin("members as c").
+		On("a.userid = c.id").
+		LeftJoin("role_member as d").
+		On("a.id = d.user_id").
+		Where(where).
+		OrderBy(sort).Desc()
+	sqls := qbs.String()
+	nums, _ := o.Raw(sqls).QueryRows(&counts)
+	fmt.Println(nums)
+	//fmt.Println(counts)
+	//fmt.Println(maps)
+	data := map[string]interface{}{"data": maps, "limit": limit, "page": page, "total": nums}
+	//data["data"] = maps
+	//json.data = maps
+	//json.limit = limit
+	//json.page = page
+	//json.total = nums
+
+	fmt.Println(limit)
+	fmt.Println(page)
+	fmt.Println(data)
+	this.Data["json"] = data
+	this.ServeJSON()
+}
+
+func (this *VerifyController) Outport() {
+	cookie := this.Ctx.GetCookie("Authorization")
+	Claims, _ := hjwt.CheckToken(cookie)
+
+	search := this.GetString("search")
+	where := "d.role_id is null"
+	o := orm.NewOrm()
+	var maps []TongjiList
+	//	fmt.Println(id)
+	zone_id := Claims["zone"].(float64)
+	zone := strconv.FormatFloat(zone_id, 'f', 0, 64)
+	role_id := Claims["role_id"].(float64)
+	fmt.Println(zone_id)
+	if role_id == 2 {
+		where = where + " and b.id = " + zone
+	}
+	if search != "" {
+		where = where + " and (c.username like '%" + search + "%' or c.realname like '%" + search + "%' or c.phone like '%" + search + "%' or b.realname like '%" + search + "%')"
+	}
+	qb, _ := orm.NewQueryBuilder("mysql")
+
+	// 构建查询对象
+	qb.Select("a.id,a.userid,a.years,a.addtime,a.updatetime,a.worktype,a.workaddress,a.isverify,a.isyears,a.quarter1,a.quarter2,a.quarter3,a.quarter4,a.postion,a.photos,a.adminid,b.realname as adminname,c.username,c.realname,c.phone").
+		From("applys as a").
+		LeftJoin("members as b").
+		On("a.adminid = b.id").
+		LeftJoin("members as c").
+		On("a.userid = c.id").
+		LeftJoin("role_member as d").
+		On("a.id = d.user_id").
+		Where(where).
+		OrderBy("a.updatetime").Desc()
+
+	// 导出 SQL 语句
+	sql := qb.String()
+	num, _ := o.Raw(sql).QueryRows(&maps)
+	fmt.Println(num)
+
+	file, err := xlsx.OpenFile("moban.xlsx")
+	if err != nil {
+		fmt.Printf(err.Error())
+	}
+	sheet := file.Sheets[0]
+	for _, value := range maps {
+
+		row := sheet.AddRow()
+		row.SetHeightCM(1)
+		cell := row.AddCell()
+		cell.Value = strconv.Itoa(value.Id)
+		cell = row.AddCell()
+		cell.Value = value.Years
+		cell = row.AddCell()
+		cell.Value = value.Username
+		cell = row.AddCell()
+		cell.Value = value.Realname
+		cell = row.AddCell()
+		cell.Value = value.Phone
+		cell = row.AddCell()
+		cell.Value = value.Worktype
+		cell = row.AddCell()
+		cell.Value = value.Workaddress
+		cell = row.AddCell()
+		if value.Isverify > 0 {
+			cell.Value = "通过"
+		} else {
+			cell.Value = "待审"
+		}
+		cell = row.AddCell()
+		if value.Isyears > 0 {
+			cell.Value = "通过"
+		} else {
+			cell.Value = "待审"
+		}
+		cell = row.AddCell()
+		if value.Quarter2 > 0 {
+			cell.Value = "通过"
+		} else {
+			cell.Value = "待审"
+		}
+		cell = row.AddCell()
+		if value.Quarter3 > 0 {
+			cell.Value = "通过"
+		} else {
+			cell.Value = "待审"
+		}
+		cell = row.AddCell()
+		if value.Quarter4 > 0 {
+			cell.Value = "通过"
+		} else {
+			cell.Value = "待审"
+		}
+		cell = row.AddCell()
+		cell.Value = value.Postion
+		cell = row.AddCell()
+		cell.Value = value.Adminname
+		cell = row.AddCell()
+		cell.Value = function.ConvertT(value.Updatetime)
+		cell = row.AddCell()
+	}
+	err = file.Save("file.xlsx")
+	if err != nil {
+		panic(err)
+	}
+	this.Ctx.Output.Header("Accept-Ranges", "bytes")
+	this.Ctx.Output.Header("Content-Disposition", "attachment; filename="+fmt.Sprintf("%s", "file.xlsx")) //文件名
+	this.Ctx.Output.Header("Cache-Control", "must-revalidate, post-check=0, pre-check=0")
+	this.Ctx.Output.Header("Pragma", "no-cache")
+	this.Ctx.Output.Header("Expires", "0")
+	//最主要的一句
+	http.ServeFile(this.Ctx.ResponseWriter, this.Ctx.Request, "file.xlsx")
+
 }

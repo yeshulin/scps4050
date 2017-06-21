@@ -80,6 +80,8 @@ func init() {
 	beego.Router("/admin/verify/reject", &admin.VerifyController{}, "Post:Reject")
 	beego.Router("/admin/verify/setremark", &admin.VerifyController{}, "Post:Setremark")
 	beego.Router("/admin/verify/tongji", &admin.VerifyController{}, "get:Tongji")
+	beego.Router("/admin/verify/tongjilist", &admin.VerifyController{}, "get:TongjiList")
+	beego.Router("/admin/verify/outport", &admin.VerifyController{}, "get:Outport")
 	beego.Router("/admin/verify/view", &admin.VerifyController{}, "get:View")
 	beego.Router("/admin/verify/applys", &admin.VerifyController{}, "get:Applys")
 	beego.Router("/admin/verify/passapplys", &admin.VerifyController{}, "Post:Passapplys")
