@@ -48,10 +48,24 @@ func (this *ApplysController) Post() {
 	userid, _ := strconv.Atoi(this.GetString("userid"))
 	years := this.GetString("years")
 	adminid, _ := strconv.Atoi(this.GetString("adminid"))
+	ischeck, _ := strconv.Atoi(this.GetString("ischeck"))
 	quarter1, _ := strconv.Atoi(this.GetString("quarter1"))
 	quarter2, _ := strconv.Atoi(this.GetString("quarter2"))
 	quarter3, _ := strconv.Atoi(this.GetString("quarter3"))
 	quarter4, _ := strconv.Atoi(this.GetString("quarter4"))
+	isyears := 1
+	if ischeck == -1 {
+		if quarter1 > 0 {
+			quarter1 = -1
+		} else if quarter2 > 0 {
+			quarter2 = -1
+		} else if quarter3 > 0 {
+			quarter3 = -1
+		} else if quarter4 > 0 {
+			quarter4 = -1
+		}
+		isyears = -1
+	}
 	applysinfo := models.Applys{Userid: userid, Years: years}
 	err := o.Read(&applysinfo, "userid", "years")
 	fmt.Println(applysinfo)
@@ -65,13 +79,14 @@ func (this *ApplysController) Post() {
 		} else {
 			applys.Isverify = 1
 			applys.Adminid = adminid
-			applys.Isyears = 1
+			applys.Isyears = isyears
 			applys.Quarter1 = quarter1
 			applys.Quarter2 = quarter2
 			applys.Quarter3 = quarter3
 			applys.Quarter4 = quarter4
 			applys.Postion = this.GetString("longitude") + "," + this.GetString("latitude")
 			applys.Photos = this.GetString("photos")
+			applys.Remark = this.GetString("remark")
 			applys.Updatetime = time.Now().Unix()
 			num, err1 := o.Update(&applys)
 			if err1 != nil {
