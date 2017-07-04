@@ -70,16 +70,20 @@
         <td>{{.applys.Adminname}}</td>
     </tr>
 	<tr>
+        <td>年度</td>
+        <td>{{if gt .applys.Isyears 0}}通过{{else if eq .applys.Isyears -1}}不通过{{else}}待审{{end}}</td>
+    </tr>
+	<tr>
         <td>二季度</td>
-        <td>{{if gt .applys.Quarter2 0}}通过{{else}}待审{{end}}</td>
+        <td>{{if gt .applys.Quarter2 0}}通过{{else if eq .applys.Quarter2 -1}}不通过{{else}}待审{{end}}</td>
     </tr>
 	<tr>
         <td>三季度</td>
-        <td>{{if gt .applys.Quarter3 0}}通过{{else}}待审{{end}}</td>
+        <td>{{if gt .applys.Quarter3 0}}通过{{else if eq .applys.Quarter3 -1}}不通过{{else}}待审{{end}}</td>
     </tr>
 	<tr>
         <td>四季度</td>
-        <td>{{if gt .applys.Quarter4 0}}通过{{else}}待审{{end}}</td>
+        <td>{{if gt .applys.Quarter4 0}}通过{{else if eq .applys.Quarter4 -1}}不通过{{else}}待审{{end}}</td>
     </tr>
 	<tr>
         <td>签到定位</td>

@@ -28,7 +28,7 @@ func (this *ApplysController) List() {
 	qb, _ := orm.NewQueryBuilder("mysql")
 
 	// 构建查询对象
-	qb.Select("a.id,a.userid,a.years,a.addtime,a.updatetime,a.worktype,a.workaddress,a.isverify").
+	qb.Select("a.id,a.userid,a.years,a.addtime,a.updatetime,a.worktype,a.workaddress,a.isverify,a.isyears,a.quarter2,a.quarter3,a.quarter4,a.remark").
 		From("applys as a").
 		Where(where).
 		OrderBy("a.id").Desc()

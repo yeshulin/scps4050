@@ -220,6 +220,8 @@
 						render:function(data, type, row, meta){
 							if(data==1){
 								return '通过';
+							}else if(data ==-1){
+								return '不通过';
 							}else{
 								return '待审';
 							}
@@ -231,6 +233,8 @@
 						render:function(data, type, row, meta){
 							if(data > 0){
 								return '通过';
+							}else if(data ==-1){
+								return '不通过';
 							}else{
 								return '待审';
 							}
@@ -241,6 +245,8 @@
 						render:function(data, type, row, meta){
 							if(data > 0){
 								return '通过';
+							}else if(data ==-1){
+								return '不通过';
 							}else{
 								return '待审';
 							}
@@ -251,6 +257,8 @@
 						render:function(data, type, row, meta){
 							if(data > 0){
 								return '通过';
+							}else if(data ==-1){
+								return '不通过';
 							}else{
 								return '待审';
 							}

@@ -273,7 +273,7 @@ func (this *VerifyController) Applys() {
 	qb, _ := orm.NewQueryBuilder("mysql")
 
 	// 构建查询对象
-	qb.Select("a.id,a.userid,a.years,a.addtime,a.updatetime,a.worktype,a.workaddress,a.isverify,a.isyears,a.quarter1,a.quarter2,a.quarter3,a.quarter4,a.postion,a.photos,a.adminid,b.realname as adminname").
+	qb.Select("a.id,a.userid,a.years,a.addtime,a.updatetime,a.worktype,a.workaddress,a.remark,a.isverify,a.isyears,a.quarter1,a.quarter2,a.quarter3,a.quarter4,a.postion,a.photos,a.adminid,b.realname as adminname").
 		From("applys as a").
 		LeftJoin("members as b").
 		On("a.adminid = b.id").
@@ -486,7 +486,7 @@ func (this *VerifyController) TongjiList() {
 	qb, _ := orm.NewQueryBuilder("mysql")
 
 	// 构建查询对象
-	qb.Select("a.id,a.userid,a.years,a.addtime,a.updatetime,a.worktype,a.workaddress,a.isverify,a.isyears,a.quarter1,a.quarter2,a.quarter3,a.quarter4,a.postion,a.photos,a.adminid,b.realname as adminname,c.username,c.realname,c.phone").
+	qb.Select("a.id,a.userid,a.years,a.addtime,a.updatetime,a.worktype,a.workaddress,a.remark,a.isverify,a.isyears,a.quarter1,a.quarter2,a.quarter3,a.quarter4,a.postion,a.photos,a.adminid,b.realname as adminname,c.username,c.realname,c.phone").
 		From("applys as a").
 		LeftJoin("members as b").
 		On("a.adminid = b.id").
@@ -505,7 +505,7 @@ func (this *VerifyController) TongjiList() {
 	/*查询总量*/
 	qbs, _ := orm.NewQueryBuilder("mysql")
 	var counts []TongjiList
-	qbs.Select("a.id,a.userid,a.years,a.addtime,a.updatetime,a.worktype,a.workaddress,a.isverify,a.isyears,a.quarter1,a.quarter2,a.quarter3,a.quarter4,a.postion,a.photos,a.adminid,b.realname as adminname,c.username,c.realname,c.phone").
+	qbs.Select("a.id,a.userid,a.years,a.addtime,a.updatetime,a.worktype,a.workaddress,a.remark,a.isverify,a.isyears,a.quarter1,a.quarter2,a.quarter3,a.quarter4,a.postion,a.photos,a.adminid,b.realname as adminname,c.username,c.realname,c.phone").
 		From("applys as a").
 		LeftJoin("members as b").
 		On("a.adminid = b.id").
@@ -556,7 +556,7 @@ func (this *VerifyController) Outport() {
 	qb, _ := orm.NewQueryBuilder("mysql")
 
 	// 构建查询对象
-	qb.Select("a.id,a.userid,a.years,a.addtime,a.updatetime,a.worktype,a.workaddress,a.isverify,a.isyears,a.quarter1,a.quarter2,a.quarter3,a.quarter4,a.postion,a.photos,a.adminid,b.realname as adminname,c.username,c.realname,c.phone").
+	qb.Select("a.id,a.userid,a.years,a.addtime,a.updatetime,a.worktype,a.workaddress,a.remark,a.isverify,a.isyears,a.quarter1,a.quarter2,a.quarter3,a.quarter4,a.postion,a.photos,a.adminid,b.realname as adminname,c.username,c.realname,c.phone").
 		From("applys as a").
 		LeftJoin("members as b").
 		On("a.adminid = b.id").
@@ -598,35 +598,47 @@ func (this *VerifyController) Outport() {
 		cell = row.AddCell()
 		if value.Isverify > 0 {
 			cell.Value = "通过"
+		} else if value.Isverify == -1 {
+			cell.Value = "驳回"
 		} else {
 			cell.Value = "待审"
 		}
 		cell = row.AddCell()
 		if value.Isyears > 0 {
 			cell.Value = "通过"
+		} else if value.Isyears == -1 {
+			cell.Value = "不通过"
 		} else {
 			cell.Value = "待审"
 		}
 		cell = row.AddCell()
 		if value.Quarter2 > 0 {
 			cell.Value = "通过"
+		} else if value.Quarter2 == -1 {
+			cell.Value = "不通过"
 		} else {
 			cell.Value = "待审"
 		}
 		cell = row.AddCell()
 		if value.Quarter3 > 0 {
 			cell.Value = "通过"
+		} else if value.Quarter3 == -1 {
+			cell.Value = "不通过"
 		} else {
 			cell.Value = "待审"
 		}
 		cell = row.AddCell()
 		if value.Quarter4 > 0 {
 			cell.Value = "通过"
+		} else if value.Quarter4 == -1 {
+			cell.Value = "不通过"
 		} else {
 			cell.Value = "待审"
 		}
 		cell = row.AddCell()
 		cell.Value = value.Postion
+		cell = row.AddCell()
+		cell.Value = value.Remark
 		cell = row.AddCell()
 		cell.Value = value.Adminname
 		cell = row.AddCell()

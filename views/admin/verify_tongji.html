@@ -40,12 +40,12 @@
 		<th>灵活就业地址</th>
         <th>灵活就业形式</th>
 		<th>资料审核</th>
-		<th>备注</th>
 		<th>年度审核</th>
 		<th>二季度</th>
 		<th>三季度</th>
 		<th>四季度</th>
 		<th>签到位置</th>
+		<th>备注</th>
 		<th>核查员</th>
 		<th>更新时间</th>
         <th>操作</th>
@@ -156,18 +156,19 @@
 							if(data==1){
 								return '通过';
 							}else if(data ==-1){
-								return '驳回';
+								return '不通过';
 							}else{
 								return '待审';
 							}
 						}
 					},
-					{data:'Remark'},
 					{ 
 						data: 'Isyears',
 						render:function(data, type, row, meta){
 							if(data==1){
 								return '通过';
+							}else if(data ==-1){
+								return '不通过';
 							}else{
 								return '待审';
 							}
@@ -179,6 +180,8 @@
 						render:function(data, type, row, meta){
 							if(data > 0){
 								return '通过';
+							}else if(data ==-1){
+								return '不通过';
 							}else{
 								return '待审';
 							}
@@ -189,6 +192,8 @@
 						render:function(data, type, row, meta){
 							if(data > 0){
 								return '通过';
+							}else if(data ==-1){
+								return '不通过';
 							}else{
 								return '待审';
 							}
@@ -199,12 +204,15 @@
 						render:function(data, type, row, meta){
 							if(data > 0){
 								return '通过';
+							}else if(data ==-1){
+								return '不通过';
 							}else{
 								return '待审';
 							}
 						}
 					},
 					{data:'Postion'},
+					{data:'Remark'},
 					{data:'Adminname'},
 					{ 
 						data: 'Updatetime',
