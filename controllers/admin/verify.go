@@ -493,13 +493,14 @@ func (this *VerifyController) TongjiList() {
 		LeftJoin("members as c").
 		On("a.userid = c.id").
 		LeftJoin("role_member as d").
-		On("a.id = d.user_id").
+		On("a.userid = d.user_id").
 		Where(where).
 		OrderBy(sort).Desc().
 		Limit(ilimit).Offset(istart)
 
 	// 导出 SQL 语句
 	sql := qb.String()
+	fmt.Println(sql)
 	num, _ := o.Raw(sql).QueryRows(&maps)
 	fmt.Println(num)
 	/*查询总量*/
@@ -512,7 +513,7 @@ func (this *VerifyController) TongjiList() {
 		LeftJoin("members as c").
 		On("a.userid = c.id").
 		LeftJoin("role_member as d").
-		On("a.id = d.user_id").
+		On("a.userid = d.user_id").
 		Where(where).
 		OrderBy(sort).Desc()
 	sqls := qbs.String()
@@ -563,7 +564,7 @@ func (this *VerifyController) Outport() {
 		LeftJoin("members as c").
 		On("a.userid = c.id").
 		LeftJoin("role_member as d").
-		On("a.id = d.user_id").
+		On("a.userid = d.user_id").
 		Where(where).
 		OrderBy("a.updatetime").Desc()
 
